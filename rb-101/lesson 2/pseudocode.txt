@@ -1,0 +1,6 @@
+1. A method that returns the sum of two integers
+
+2. A method that takes an arary of strings and returns a string that is all those strings concatenated together
+
+3. A method that takes an array of integers and returns a new array with every other element
+
