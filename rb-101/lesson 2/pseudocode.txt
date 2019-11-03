@@ -1,6 +1,42 @@
 1. A method that returns the sum of two integers
 
-2. A method that takes an arary of strings and returns a string that is all those strings concatenated together
+input: two integers
+output: one integer
+
+START
+	SET result variable to INPUT 1 + INPUT 2
+	Return result
+END
+
+
+2. A method that takes an array of strings and returns a string that is all those strings concatenated together
+
+input: array of strings
+return: string
+
+START
+	SET result variable to empty string
+	for each element of the input array
+		add each element to result
+	return result
+END
+
 
 3. A method that takes an array of integers and returns a new array with every other element
+
+input: array of ints
+returns: array of ints (modified)
+
+START
+	SET counter to 0
+	SET results array to empty array
+
+	WHILE counter is less than length of input array
+		IF counter is odd
+			skip
+		ELSE (counter is even)
+			append integer from input array to results array
+		add 1 to counter
+	return results array
+END
 
