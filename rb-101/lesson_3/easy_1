@@ -88,3 +88,5 @@ Q9. Given the hash below
 Turn this into an array containing only two elements: Barney's name and Barney's number
 
 A9. flintstones.delete_if {|key, value| key != "Barney" }
+OH NO I DIDN'T READ THE INSTRUCTIONS PROPERLY
+    flintstones.assoc("Barney")
