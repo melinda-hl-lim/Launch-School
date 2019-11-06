@@ -1,0 +1,91 @@
+Q1. In this hash of people and their age,
+    ages = { "Herman" => 32, "Lily" => 30, "Grandpa" => 402, "Eddie" => 10 }
+see if "Spot" is present.
+Bonus: What are two other hash methods that would work just as well for this solution?
+
+A1. ages.key?("Spot")
+    ages.include?("Spot")
+    ages.member?("Spot")
+
+
+Q2. Starting with this string:
+    munsters_description = "The Munsters are creepy in a good way."
+Convert the string in the following ways (code will be executed on original munsters_description above):
+
+A2. - "tHE mUNSTERS ARE CREEPY IN A GOOD WAY."
+        munsters_description.upcase.gsub("T", "t").gsub("M","m")
+        munsters_description.swapcase!
+    - "The munsters are creepy in a good way."
+        munsters_description.capitalize!()
+    - "the munsters are creepy in a good way."
+        munsters_description.downcase!()
+    - "THE MUNSTERS ARE CREEPY IN A GOOD WAY."
+        munsters_description.upcase!()
+
+
+Q3. We have most of the Munster family in our age hash:
+    ages = { "Herman" => 32, "Lily" => 30, "Grandpa" => 5843, "Eddie" => 10 }
+add ages for Marilyn and Spot to the existing hash
+    additional_ages = { "Marilyn" => 22, "Spot" => 237 }
+
+A3. ages.merge!(additional_ages)
+
+
+Q4. See if the name "Dino" appears in the string below:
+    advice = "Few things in life are as important as house training your pet dinosaur."
+
+A4. advice.include?("Dino")
+
+
+Q5. Show an easier way to write this array:
+    flintstones = ["Fred", "Barney", "Wilma", "Betty", "BamBam", "Pebbles"]
+
+A5. %w(Fred Barney Wilma Betty BamBam Pebbles)
+
+
+Q6. How can we add the family pet "Dino" to our usual array:
+    flintstones = %w(Fred Barney Wilma Betty BamBam Pebbles)
+
+A6. flintstones.append("Spot")
+
+
+Q7. Using the previous array, how can we add multiple items to our array? (Dino and Hoppy)
+
+A7. flintstones.push("Spot", "Hoppy")
+
+
+Q8. Shorten this sentence:
+    advice = "Few things in life are as important as house training your pet dinosaur."
+...remove everything starting from "house".
+
+Review the String#slice! documentation, and use that method to make the return value "Few things in life are as important as ". But leave the advice variable as "house training your pet dinosaur.".
+
+As a bonus, what happens if you use the String#slice method instead?
+
+A8. To get a return value of "Few tings in life are as important as" and leave the rest of the sentence in the advice variable, we can do:
+    advice.slice!(0, 38)
+If we use the String#slice method instead, the return value is the same (if we use the same indices as arguments); however, the value of the advice variable remains unchanged.
+
+
+Q9. Write a one-liner to count the number of lower-case 't' characters in the following string:
+    statement = "The Flintstones Rock!"
+
+A9. statement.count('t')
+
+
+Q10. Back in the stone age (before CSS) we used spaces to align things on the screen. If we had a 40 character wide table of Flintstone family members, how could we easily center that title above the table with spaces?
+    title = "Flintstone Family Members"
+
+A10. First we need to find the number of characters are in the title string:
+     > title.length()
+    => 25
+Now we need to do a little math to figure out the difference between the length of the title and the length of the table:
+     > length_diff = 40 - 25
+    => 15
+And now we can add blank spaces on either side of the string so that it's roughly centered!
+     > title.insert(0, "       ")
+    => "       Flintstone Family Members"
+     > title += "        "
+    => "       Flintstone Family Members        "
+
+Or I could have looked at the documentation more carefully and found a center() method for Strings...
