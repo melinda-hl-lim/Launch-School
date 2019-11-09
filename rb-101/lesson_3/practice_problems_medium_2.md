@@ -1,8 +1,13 @@
 
 
-Q2. Predict how the object IDs will change through the flow of the code.
 
-A2. Note: Rather than having a super long Q2 statement, I've taken the code blocks and incorporated them into my answer to show the flow of the method.
+### Question 2
+
+Predict how the object IDs will change through the flow of the code.
+
+#### Answer 2
+
+Note: Rather than having a super long Q2 statement, I've taken the code blocks and incorporated them into my answer to show the flow of the method.
 
     def fun_with_ids
       a_outer = 42
@@ -54,10 +59,13 @@ We have a bunch of print statements referencing: x_outer, x_outer_id, x_inner, a
 However, the print statements referencing x_inner and x_inner_id cannot access the variable initialized in the scope of an_illustrative_method. So it prints "ugh ohhhhh" and returns nil.
 
 
-Q3. Let's call a method, and pass both a string and an array as parameters and see how even though they are treated in the same way by Ruby, the results can be different.
+### Question 3
+
+Let's call a method, and pass both a string and an array as parameters and see how even though they are treated in the same way by Ruby, the results can be different.
 
 Study the following code and state what will be displayed...and why:
 
+``` ruby
     def tricky_method(a_string_param, an_array_param)
       a_string_param += "rutabaga"
       an_array_param << "rutabaga"
@@ -69,13 +77,20 @@ Study the following code and state what will be displayed...and why:
 
     puts "My string looks like this now: #{my_string}"
     puts "My array looks like this now: #{my_array}"
+```
 
-A3. The trick_method() does not mutate my_string because the string method += creates a new string object with the appended string. However, my_array() is mutated because the array method << mutates the original array. Therefore the two outputs would be:
+#### Answer 3
+
+The trick_method() does not mutate my_string because the string method += creates a new string object with the appended string. However, my_array() is mutated because the array method << mutates the original array. Therefore the two outputs would be:
+
     "My string looks like this now: pumpkins"
     "My array looks like this now: [pumpkins, rutabaga]"
 
 
-Q4. To drive that last one home...let's turn the tables and have the string show a modified output, while the array thwarts the method's efforts to modify the caller's version of it.
+### Question 4
+
+To drive that last one home...let's turn the tables and have the string show a modified output, while the array thwarts the method's efforts to modify the caller's version of it.
+``` ruby
     def tricky_method_two(a_string_param, an_array_param)
       a_string_param << 'rutabaga'
       an_array_param = ['pumpkins', 'rutabaga']
@@ -87,7 +102,93 @@ Q4. To drive that last one home...let's turn the tables and have the string show
 
     puts "My string looks like this now: #{my_string}"
     puts "My array looks like this now: #{my_array}"
+```
 
-A4. Now, the output will show the value of my_string has changed from "pumpkins" to "pumpkinsrutabaga". This is because the << method modifies the original string. However, the my_array value will still be ["pumpkins"], because tricky_method_two() reassigns a new value to the local variable an_array_param within its scope, but leaves the original array untouched.
+#### Answer 4
+
+Now, the output will show the value of my_string has changed from "pumpkins" to "pumpkinsrutabaga". This is because the << method modifies the original string. However, the my_array value will still be ["pumpkins"], because tricky_method_two() reassigns a new value to the local variable an_array_param within its scope, but leaves the original array untouched.
 
 
+### Question 5
+
+Depending on a method to modify its arguments can be tricky:
+
+``` ruby
+    def tricky_method(a_string_param, an_array_param)
+      a_string_param += "rutabaga"
+      an_array_param << "rutabaga"
+    end
+
+    my_string = "pumpkins"
+    my_array = ["pumpkins"]
+    tricky_method(my_string, my_array)
+
+    puts "My string looks like this now: #{my_string}"
+    puts "My array looks like this now: #{my_array}"
+```
+
+Whether the above "coincidentally" does what we think we wanted "depends" upon what is going on inside the method.
+
+How can we refactor this practice problem to make the result easier to predict and easier for the next programmer to maintain?
+
+#### Answer 5
+First, it would be easier to predict and maintain `trick_method()` if the method consistently mutated its arguments or simply output new values while leaving the arguments unmodified. To make `trick_method()` a purely destructive method, we could rewrite it as:
+
+``` ruby
+    def tricky_method(a_string_param, an_array_param)
+      a_string_param << "rutabaga"
+      an_array_param << "rutabaga"
+    end
+```
+
+To make it a method that returns new string and and array objects, we could rewrite it as:
+
+``` ruby
+    def tricky_method(a_string_param, an_array_param)
+      a_string_param += "rutabaga"
+      an_array_param = an_array_param + ["rutabaga"]
+      a_string_param, an_array_param
+    end
+```
+
+Second, I would change the names of the method for ease of use by other programmers. If `tricky_method()` were destructive, it should be named `tricky_method!()` to reflect its destructive nature.
+
+### CORRECTION for 5
+**Note that the practice problem asks us to refactor the whole practice problem, not just `tricky_method()`**
+
+
+### Question 6
+
+How could the unnecessary duplication in this method be removed?
+
+``` ruby
+    def color_valid(color)
+      if color == "blue" || color == "green"
+        true
+      else
+        false
+      end
+    end
+```
+
+#### Answer 6
+
+We could rewrite the method as:
+
+``` ruby
+    def color_valid(color)
+      valid_colors = %w(blue green)
+      return true if valid_colors.include?(color)
+      false
+    end
+```
+
+### CORRECTION for 6
+
+Launch School says "Ruby will automatically evaluate statements, so we can rewrite the method as: "
+
+```ruby
+    def color_valid(color)
+      color == "blue" || color == "green"
+    end
+```
