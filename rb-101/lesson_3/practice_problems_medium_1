@@ -1,0 +1,180 @@
+Q1. For this practice problem, write a one-line program that creates the following output 10 times, with the subsequent line indented 1 space to the right:
+    The Flintstones Rock!
+     The Flintstones Rock!
+      The Flintstones Rock!
+
+A1. 10.times { |count| puts (" " * count) + "The Flintstones Rock!"}
+
+
+Q2. The result of the following statement will be an error:
+    puts "the value of 40 + 2 is " + (40 + 2)
+Why is this and what are two possible ways to fix this?
+
+A2. The statement will result in an error because it is trying to concatenate an integer (the 40+2 statement) with a string (the part of the statement between " " marks).
+To fix this we could either:
+    a) invoke the to_s method after the (40 + 2) to make
+        puts "the value of 40 + 2 is " + (40 + 2).to_s
+    b) just write 42 as part of the string...?
+    c) The actual answer b: use string interpolation to add 40 and 2 in the string
+
+
+Q3. Alan wrote the following method, which was intended to show all of the factors of the input number:
+
+    def factors(number)
+      divisor = number
+      factors = []
+      begin
+        factors << number / divisor if number % divisor == 0
+        divisor -= 1
+      end until divisor == 0
+      factors
+    end
+
+Alyssa noticed that this will fail if the input is 0, or a negative number, and asked Alan to change the loop. How can you make this work without using begin/end/until? Note that we're not looking to find the factors for 0 or negative numbers, but we just want to handle it gracefully instead of raising an exception or going into an infinite loop.
+    A3a)
+    Melinda question 1: why does 0 or a negative number break the method?
+        With 0 and a negative number, the line "divisor -= 1" ends up increasing the absolute value of the divisor, which does not help us find any factors. To find factors, we need the divisor to approach 0 one integer at a time, which this line does not do.
+    Melinda question 2: how do we fix the loop so that it doesn't have the 0/-num issue?
+        We could probably have a check to make sure that the divisor > 0.
+    Melinda question 3: how do we redo this method without using a begin/end/until loop?
+        To get a range of integers between 0 and number, we could have the line:
+            potential_factors = (1..number).to_a.reverse
+        Afterwards, we could iterate through the array with:
+            potential_factors.each do |potential_factor|
+                factors << number / potential_factor if number % potential_factor == 0
+            end
+
+    CORRECTION: the smart thing would have been to use a while loop such as:
+        while divisor > 0
+            actors << number / divisor if number % divisor == 0
+        end
+
+Bonus 1: What is the purpose of the number % divisor == 0 ?
+    A3b.) Number % divisor == 0 is a conditional check to see if we can return an integer by dividing the number by the divisor. If so, then the result is a factor of the input number.
+
+Bonus 2: What is the purpose of the second-to-last line (line 8) in the method (the factors before the method's end)?
+    A3c) The last line, factors, returns the final array of factors of numbers. Since it is the last line in the method, it's the return value of the method.
+
+
+Q4. Alyssa was asked to write an implementation of a rolling buffer. Elements are added to the rolling buffer and if the buffer becomes full, then new elements that are added will displace the oldest elements in the buffer.
+
+She wrote two implementations saying, "Take your pick. Do you like << or + for modifying the buffer?". Is there a difference between the two, other than what operator she chose to use to add an element to the buffer?
+
+def rolling_buffer1(buffer, max_buffer_size, new_element)
+  buffer << new_element
+  buffer.shift if buffer.size > max_buffer_size
+  buffer
+end
+
+def rolling_buffer2(input_array, max_buffer_size, new_element)
+  buffer = input_array + [new_element]
+  buffer.shift if buffer.size > max_buffer_size
+  buffer
+end
+
+A4. There is a difference between the two rolling_buffer methods. In rolling_buffer2(), she adds the new element in an array; this results in each new element living in a nested array inside the input_array.
+CORRECTION: The two methods differ with how they affect the buffer object passed in. In rolling_buffer1(), the buffer object is modified and returned; however, in rolling_buffer2(), the buffer object - input_array - is not modified, and a new buffer object is returned.
+
+
+Q5. Alyssa asked Ben to write up a basic implementation of a Fibonacci calculator. A user passes in two numbers, and the calculator will keep computing the sequence until some limit is reached.
+
+Ben coded up this implementation but complained that as soon as he ran it, he got an error. Something about the limit variable. What's wrong with the code?
+
+    limit = 15
+
+    def fib(first_num, second_num)
+      while first_num + second_num < limit
+        sum = first_num + second_num
+        first_num = second_num
+        second_num = sum
+      end
+      sum
+    end
+
+    result = fib(0, 1)
+    puts "result is #{result}"
+
+How would you fix this so that it works?
+
+A5. The scope of a method is limited to variables passed in as arguments and variables defined within the method block. Because the limit variable is defined outside the block, the method fib() cannot access it, thus resulting in an undefined variable error.
+    To fix this issue, we could either make limit a hardcoded value defined in the method (not recommended though as you'd have to look at the implementation of the method to understand what's happening), or have it be an argument passed in to the method.
+
+
+Q6. What is the output of the following code?
+
+    answer = 42
+
+    def mess_with_it(some_number)
+      some_number += 8
+    end
+
+    new_answer = mess_with_it(answer)
+
+    p answer - 8
+
+A6. The output of the following code will be 34.
+
+
+Q7. One day Spot was playing with the Munster family's home computer and he wrote a small program to mess with their demographic data:
+
+    munsters = {
+      "Herman" => { "age" => 32, "gender" => "male" },
+      "Lily" => { "age" => 30, "gender" => "female" },
+      "Grandpa" => { "age" => 402, "gender" => "male" },
+      "Eddie" => { "age" => 10, "gender" => "male" },
+      "Marilyn" => { "age" => 23, "gender" => "female"}
+    }
+
+    def mess_with_demographics(demo_hash)
+      demo_hash.values.each do |family_member|
+        family_member["age"] += 42
+        family_member["gender"] = "other"
+      end
+    end
+
+After writing this method, he typed the following... and before Grandpa could stop him, he hit the Enter key with his tail:
+
+    mess_with_demographics(munsters)
+
+Did the family's data get ransacked? Why or why not?
+
+A7. The family's data did not get ransacked. The methods called in this method on the demo_hash argument are values(), which doesn't mutate the demo_hash array and merely returns a new array of values from the hash. The expresions within the each block also do not mutate the original demo_hash, as it's performing the operations on each value of the demo_hash.values array.
+
+TODO: MELINDA GOT THIS ONE WRONG AND DOESN'T QUITE UNDERSTAND.
+
+
+Q8. Method calls can take expressions as arguments. Suppose we define a method called rps as follows, which follows the classic rules of rock-paper-scissors game, but with a slight twist that it declares whatever hand was used in the tie as the result of that tie.
+
+    def rps(fist1, fist2)
+      if fist1 == "rock"
+        (fist2 == "paper") ? "paper" : "rock"
+      elsif fist1 == "paper"
+        (fist2 == "scissors") ? "scissors" : "paper"
+      else
+        (fist2 == "rock") ? "rock" : "scissors"
+      end
+    end
+
+What is the result of the following call?
+
+    puts rps(rps(rps("rock", "paper"), rps("rock", "scissors")), "rock")
+
+A8. Paper
+
+
+Q9. Consider these two simple methods:
+
+    def foo(param = "no")
+      "yes"
+    end
+
+    def bar(param = "no")
+      param == "no" ? "yes" : "no"
+    end
+
+What would be the return value of the following method invocation?
+
+    bar(foo)
+
+A9. "no"
+
