@@ -15,7 +15,7 @@ The greeting variable is initialized inside the `if` block; therefore it is loca
 
 #### CORRECTION for 1
 
-Launch School says: "`greeting` is `nil` here, and a no "undefined method or local variable" error is thrown. Typically, when you reference an uninitialized variable, Ruby will raise an exception, stating that it’s undefined. However, when you initialize a local variable within an `if` block, even if that `if` block doesn’t get executed, the local variable is initialized to `nil`."
+Launch School says: "`greeting` is `nil` here, and there is no "undefined method or local variable" error thrown. Typically, when you reference an uninitialized variable, Ruby will raise an exception, stating that it’s undefined. However, when you initialize a local variable within an `if` block, even if that `if` block doesn’t get executed, the local variable is initialized to `nil`."
 
 
 ### Question 2
