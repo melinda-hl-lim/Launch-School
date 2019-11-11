@@ -288,14 +288,14 @@ Ask some clarifying questions such as:
 
 Then to conclude the 'Understand the Problem' step, we should write down inputs, outputs, and describe rules to follow.
 
-- input: string
-- output: string (not the same object)
-- rules:
-    - Explicit requirements:
-        - every palindrome in the string must be converted to uppercase. (Reminder: a palindrome is a word that reads the same forwards and backward).
-        - Palindromes are case sensitive ("Dad" is not a palindrome, but "dad" is.)
-    - Implicit requirements:
-        - the returned string shouldn't be the same tring object.
+input: string
+output: string (not the same object)
+rules:
+    Explicit requirements:
+        every palindrome in the string must be converted to uppercase. (Reminder: a palindrome is a word that reads the same forwards and backward).
+        Palindromes are case sensitive ("Dad" is not a palindrome, but "dad" is.)
+    Implicit requirements:
+        the returned string shouldn't be the same tring object.
 
 
 ### D&A: Data Structure & Algorithm
@@ -321,12 +321,14 @@ Some questions you might have?
 input: string
 output: an array of substrings
 rules:
-    - Explicit requirements:
-       - return only substrings which are palindromes.
-       - palindrome words should be case sensitive, meaning "abBA" is not a palindrome.
+    Explicit requirements:
+       return only substrings which are palindromes.
+       palindrome words should be case sensitive, meaning "abBA" is not a palindrome.
+
 Algorithm:
+
  substrings method
- =================
+
  - create an empty array called `result` which will contain all
     the required substrings
   - initialize variable start_substring_idx and assign 0 to it.
@@ -346,12 +348,12 @@ Algorithm:
   - return `result` array
 
   is_palindrome? method
-  =====================
+
   - check whether the string value is equal to its reversed
     value. You can use the String#reverse method.
 
   palindrome_substrings method
-  ============================
+
   - initialize a result variable to an empty array
   - create an array named substring_arr that contains all of the
     substrings of the input string that are at least 2 characters long.
