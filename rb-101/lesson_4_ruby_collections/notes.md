@@ -318,16 +318,16 @@ Some questions you might have?
 3. Will inputs always be strings?
 4. What does it mean to treat palindrome words case-sensitively?
 
-input: string
-output: an array of substrings
-rules:
-    Explicit requirements:
-       return only substrings which are palindromes.
-       palindrome words should be case sensitive, meaning "abBA" is not a palindrome.
+- Input: string
+- Output: an array of substrings
+- Rules:
+....- Explicit requirements:
+........- return only substrings which are palindromes.
+........- palindrome words should be case sensitive, meaning "abBA" is not a palindrome.
 
 Algorithm:
 
- substrings method
+*substrings method*
 
  - create an empty array called `result` which will contain all
     the required substrings
@@ -347,12 +347,12 @@ Algorithm:
   - end outer loop
   - return `result` array
 
-  is_palindrome? method
+*is_palindrome? method*
 
   - check whether the string value is equal to its reversed
     value. You can use the String#reverse method.
 
-  palindrome_substrings method
+*palindrome_substrings method*
 
   - initialize a result variable to an empty array
   - create an array named substring_arr that contains all of the
@@ -363,4 +363,117 @@ Algorithm:
   - return the result array
 
 
+
+## Selection & Transformation
+
+Besides *iteration*, two more actions to perform on a collection are:
+    - *Selection*: picking certain elements out of the collection depending on some criterion.
+    - *Transformation*: manipulating every element in the collection.
+
+Remeber that selection and transformation both use the basics of looping:
+    1. A loop
+    2. A counter
+    3. A way to retrieve the current value
+    4. A way to exit the loop
+And they require an additional piece of information: *some criteria*
+    - Selection: uses criteria to determine which elements are selected
+    - Transformation: uses criteria to determine how to perform the transformation
+
+### Looping to Select and Transform
+
+*Selection criteria*: what determines which values are selected and which are ignored
+*Transformation criteria*: the line in code that transforms each element of the collection...?
+
+**When performing a transformation, pay attention to whether the original collection was mutated or if a new collection was returned**
+
+### Extracting to Methods
+
+Since usually selecting or transforming a collection is a very specific action, this action is usually extracted into convenience methods.
+
+Regarding mutating arrays: Rather than returning a reference to a new arrray object, this method returns a reference to the mutated original array.
+
+Whether a method mutates its arguments depends on its implementation.
+
+### More Flexible Methods
+
+We can create more flexible and generic methods by passing in additional arguments to alter the logic of the iteration. (Earlier we were only passing in one argument -- the object to iterate, select and transform on.)
+
+#### Side note: The `for` loop
+
+``` ruby
+alphabet = 'abcdefghijklmnopqrstuvwxyz'
+
+for char in alphabet.chars
+  puts char
+end
+```
+- Calling `String#chars` method on `alphabet` results in an array with each character of the String `alphabet` as its own element.
+Launch School says we can think of `loop` and `for` as interchangable syntax.
+
+### Summary
+
+Key points:
+1. We often perform iteration, selection or transformation operations on a collection to manipulate a collection nearly any way we need to
+2. These actions can be moved into methods to reuse on different collections.
+3. Note if the method mutates or returns the original collection.
+4. We can make these methods more generic by allowing parameters to specify some criteria for selection or transformation
+5. We can chain actions on collections; however, pay attention to the return value of these methods as we might end up invoking a method on an *empty collection* of `nil`.
+
+
+
+## Methods
+
+Ruby provides built-in methods to work with collections. Here, we'll look at: `each`, `select`, and `map`.
+
+### `each` (an idiomatic iteration)
+
+``` ruby
+[1, 2, 3].each do |num|
+  puts num
+end
+# => [1,2,3]
+```
+In the example above, the method `each` is being called on the array `[1,2,3]`. The method `each` takes a block (the `do...end` part). The code within the block is executed for each iteration.
+
+How does the block know what `num` is? During each iteration, `each` sends the value of the current element to the block in the form of an argument. The argument for the block above is `num` and it represents the value of the current element in the array.
+
+The *return value* for `each` is the original collection. The original collection is not mutated.
+
+### `select`
+
+``` ruby
+[1, 2, 3].select do |num|
+  num.odd?
+end
+# => [1,3]
+```
+To perform selection, `select` evaluates the **return value of the block**. More specifically, it looks at the **truthiness** of the return value (remember, only `nil` and `false` are not considered "truthy"). The method `select` will only select the element if the block returns a "truthy" value.
+
+The *return value* of `select` is a *new collection* containing all selected elements. It no elements are selected, `select` returns an empty collection.
+
+### `map`
+
+``` ruby
+[1, 2, 3].map do |num|
+  num * 2
+end
+```
+
+The method `map` uses the return value of the block to perform a *transformation*. It takes the value evaluated from the block and places it in a *new collection*.
+
+The *return value* of `map` is a *new collection* whose elements are the return values of the block -- essentially each element of the original collection transformed.
+
+#### Side note: Enumerable
+
+`Array` and `Hash` both have their own `each` method specific to their class.
+
+Methods `select` and `map` are defined in a module **Enumerable**, which is available to the `Array` and `Hash` classes.
+
+The main point is: certain collection types have access to specific methods for a reason. However, not all methods are available to all different object types.
+
+### Summary
+
+Methods like `each`, `select`, and `map` allow for simpler implementations of common collection manipulation tasks.
+
+It's crucial to understand how these methods use the block's return value to perform their inteded task.
 
