@@ -477,3 +477,174 @@ Methods like `each`, `select`, and `map` allow for simpler implementations of co
 
 It's crucial to understand how these methods use the block's return value to perform their inteded task.
 
+
+
+## More Methods
+
+We're looking at more common Ruby methods and exploring how they work.
+
+List of methods covered in this section:
+- `Enumerable#any?`
+- `Enumerable#all?`
+- `Enumerable#each_with_index`
+- `Enumerable#each_with_object`
+- `Enumerable#first`
+- `Enumerable#include?`
+- `Enumerable#partition`
+
+### `Enumerable#any?`
+
+*From documentation:*
+
+    `any?[{ |obj| block }] --> true or false`
+    `any?(pattern) --> true or false`
+
+1. Passes each element of the collection to the given block. The method returns true if the block ever returns a value other than `false` or `nil`.
+2. If a block s not given, Ruby adds an implicit block of `{ |obj| obj }` that will cause `any?`to return `true` if at least one of the collection members is not `false` or `nil`.
+3. If a pattern is supplied, the method returns whether `pattern === element` for any collection member.
+
+*From Launch School:*
+
+There are two return values to pay attention to:
+
+  1. The return value of the **mthod** `any?`
+  2. The return value of the **block**
+
+Method `any?` looks at the truthiness of the block's return value to determine what the method's return value will be. If the block is "truthy" for any element in the collection, then `any?` will return `true`.
+
+### `Enumerable#all?`
+
+The method `all?` functions similarly to `any?`. However, `all?` only returns `true` if the block's return value in *every iteration* is "truthy".
+
+### `Enumerable#each_with_index`
+
+Return value: the original calling collection.
+
+This method functions similarly to `each`; however, `each_with_index` takes a second argument: the index of each element.
+
+``` ruby
+[1, 2, 3].each_with_index do |num, idx|
+  puts "The index of #{num} is #{idx}."
+end
+# Output:
+# The index of 1 is 0.
+# The index of 2 is 1.
+# The index of 3 is 2.
+# => [1, 2, 3]
+```
+
+Note: when calling `each_with_index` on a hash, the first argument is now an array with both the key and value:
+
+``` ruby
+{ a: "ant", b: "bear", c: "cat" }.each_with_index do |pair, index|
+  puts "The index of #{pair} is #{index}."
+end
+# Output:
+# The index of [:a, "ant"] is 0.
+# The index of [:b, "bear"] is 1.
+# The index of [:c, "cat"] is 2.
+# => { :a => "ant", :b => "bear", :c => "cat" }
+
+```
+
+### `Enumerable#each_with_object`
+
+Method `each_with_object` not only takes a block (like the methods above), but also takes a collection object to be returned method argument.
+
+The first block argument represents the current element, and the second block argument represent the collection objected passed in as a method argument.
+
+Example 1: Filled array as method argument.
+
+``` ruby
+[1, 2, 3].each_with_object(["horse"]) do |num, array|
+  array << num if num.odd?
+end
+# => ["horse", 1, 3]
+```
+
+Example 2: Empty hash
+
+Note: the first argument of the block refers to the `[key, value]` array pair normally referenced as: `pair = [key, value]`. However, we can use parentheses to capture the key and value in the first block argument.
+
+``` ruby
+{ a: "ant", b: "bear", c: "cat" }.each_with_object({}) do |(key, value), hash|
+  hash[value] = key
+end
+# => { "ant" => :a, "bear" => :b, "cat" => :c }
+```
+
+### `Enumerable#first`
+
+This method takes an optional argument which represents the number of elements to return. When no argument is given, it returns only the first element of the collection.
+
+An interesting example with a hash:
+
+``` ruby
+{ a: "ant", b: "bear", c: "cat" }.first(2)
+# => [[:a, "ant"], [:b, "bear"]]
+```
+Note:
+1. Hashes are normally thought of as unordered, and values are retrieved by keys. However, in Ruby >1.9, the order of insertion is preserved. It usually make little sense to call `first` on a hash, but we can!
+2.The *return value* of calling `first` on a hash with a numeric argument is a nested array. This is unexpected behaviour, but we can do some conversions to fix it!
+
+### `Enumerable#include?`
+
+The method `include?` returns `true` if the argument exists in the collection and `false` if it doesn't.
+
+When called on a hash, `include?` only checks the keys. It's basically an alias for `Hash#key?` or `Hash#has_key?`.
+
+### `Enumerable#partition`
+
+This method divides elements in its current collection into two collections depending on the block's return value.
+
+Since it returns two nested collections, the most idiomatic way to use `partition` is to *parallel assign* variables to capture the inner collections:
+
+``` ruby
+odd, even = [1, 2, 3].partition do |num|
+  num.odd?
+end
+
+odd  # => [1, 3]
+even # => [2]
+```
+
+Even if the calling collection is a hash, the *return value* of `partition` is an array:
+
+``` ruby
+long, short = { a: "ant", b: "bear", c: "cat" }.partition do |key, value|
+  value.size > 3
+end
+# => [[[:b, "bear"]], [[:a, "ant"], [:c, "cat"]]]
+
+long.to_h # => { :b => "bear" }
+short.to_h  # => { :a => "ant", :c => "cat" }
+```
+
+### Summary
+
+Although it's difficult to remember all these methods, the most important thing is to *know they exist* and *use the Ruby documentation* to find them and understand how they work.
+
+Documentation usually includes:
+1. Method signature(s) showing what arguments the method takes and return values
+2. A brief description of how the method's used
+3. Some code examples for different use cases
+
+Remember that the methods covered in this section are *looping constructs*. Knowing how to loop and iterate over collections is the important part!
+
+
+
+## Summary
+
+Important points to remember from this lesson:
+
+- Some of the most commonly used iterative methods are `each`, `select`, and `map`. It's important to uderstand the differences between these methods.
+
+- Methods called on collections are often used with a block; the return value of the block is passed back to the method on each iteration. Remember to pay attention to:
+    - what the method does with the block's return value
+    - what the ultimate return value of the method is
+    - any side effects the code in the block may have
+
+- There are many methods for working with collections. While it's not important to memorize them, be aware:
+    - that they exist and know where to look for them
+    - know how to read documentation in order to understand the method's return value, how it uses a block's return value (if it takes a block) and whether the method is destructive.
+
