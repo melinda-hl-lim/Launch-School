@@ -238,6 +238,257 @@ end
 #  * *
 #   *
 
-diamond(3)
-diamond(5)
-diamond(99)
+#diamond(3)
+#diamond(5)
+#diamond(99)
+
+
+
+################################
+# Stack Machine Interpretation #
+################################
+
+# Stack implemented in Ruby with `#push` and `#pop` methods
+# Register: stores the "current value" that is being operated on, and restores the result of the operation
+
+# Program requires these commands:
+
+def initialize_computer
+  register = 0
+  stack = []
+  return register, stack
+end
+
+def parse_command(command, register, stack)
+  command_array = command.split
+  command_array.each do |cmd|
+    if cmd.to_i.to_s == cmd
+      register = cmd.to_i
+    else
+      register, stack = choose_method(cmd, register, stack)
+    end
+  end
+end
+
+def choose_method(cmd, register, stack)
+  case cmd
+  when 'ADD' then register = add(register, stack)
+  when 'SUB' then register = sub(register, stack)
+  when 'MULT' then register = mult(register, stack)
+  when 'DIV' then register = div(register, stack)
+  when 'MOD' then register = mod(register, stack)
+  when 'PUSH' then push(register, stack)
+  when 'POP' then register = pop(stack)
+  when 'PRINT' then print(register)
+  end
+  return register, stack
+end
+
+def minilang(command)
+  register, stack = initialize_computer
+  register, stack = parse_command(command, register, stack)
+end
+
+# PUSH: push the register value on to the stack; leave the value in the register
+def push(register, stack)
+  stack.push(register)
+end
+
+# POP: remove the topmost item from the stack and place in register
+def pop(stack)
+  stack.pop
+end
+
+# PRINT: print the register value
+def print(register)
+  puts register
+end
+
+# ADD: pop value from stack and adds it to register value, storing the result in register
+
+def add(register, stack)
+  register + stack.pop
+end
+
+# SUB: pop value from stack and subtract from register value; store result in register
+
+def sub(register, stack)
+  register - stack.pop
+end
+
+# MULT: pop value from stack and multiply it to register value; store result in register
+
+def mult(register, stack)
+  register * stack.pop
+end
+
+# DIV: pop value from stack and divide it into register value, store integer result in register
+# X DIV == x divided by last element of stack
+def div(register, stack)
+  register / stack.pop
+end
+
+# MOD: pop value from stack, divide it into register value, store remainder in register
+
+def mod(register, stack)
+  register % stack.pop
+end
+
+#minilang('PRINT')
+#minilang('5 PUSH 3 MULT PRINT')
+#minilang('5 PRINT PUSH 3 PRINT ADD PRINT')
+#minilang('5 PUSH POP PRINT')
+#minilang('3 PUSH 4 PUSH 5 PUSH PRINT ADD PRINT POP PRINT ADD PRINT')
+#minilang('3 PUSH PUSH 7 DIV MULT PRINT ')
+#minilang('4 PUSH PUSH 7 MOD MULT PRINT ')
+#minilang('-3 PUSH 5 SUB PRINT')
+#minilang('6 PUSH')
+
+
+
+#################
+# Word to Digit #
+#################
+
+# Input: sentence string
+# Return: same strings with with digits spelt out
+
+
+def digit_to_word(msg)
+  msg = msg.chars
+  msg.map! do |word|
+    word = int_to_word(word.to_i) if int?(word)
+    word
+  end
+  msg.join
+end
+
+def int?(word)
+  word.to_i.to_s == word
+end
+
+def int_to_word(int)
+  case int
+  when 0 then 'zero'
+  when 1 then 'one'
+  when 2 then 'two'
+  when 3 then 'three'
+  when 4 then 'four'
+  when 5 then 'five'
+  when 6 then 'six'
+  when 7 then 'seven'
+  when 8 then 'eight'
+  when 9 then 'nine'
+  end
+end
+
+digit_to_word('Please call me at 5 5 5 1 2 3 4. Thanks.') #== 'Please call me at five five five one two three four. Thanks.'
+
+WORD_TO_DIGIT = {'zero' => 0,
+                'one' => 1,
+                'two' => 2,
+                'three' => 3,
+                'four' => 4,
+                'five' => 5,
+                'six' => 6,
+                'seven' => 7,
+                'eight' => 8,
+                'nine' => 9}
+
+def word_to_digit(msg)
+  msg = msg.split()
+  msg.map! do |word|
+    if int_word?(word)
+      if punctuation?(word)
+        punctuation = word[-1]
+        word = WORD_TO_DIGIT[word[0...-1]].to_s
+        word += punctuation
+      else
+        word = WORD_TO_DIGIT[word]
+      end
+    end
+    word
+  end
+  msg.join(' ')
+end
+
+def int_word?(word)
+  if punctuation?(word)
+    word = word[0...-1]
+  end
+  WORD_TO_DIGIT.keys.include?(word.downcase)
+end
+
+def punctuation?(word)
+  word.end_with?('.')
+end
+
+word_to_digit('Please call me at five five five one two three four. Thanks.')
+
+word = 'four.'
+"Punctuation? #{punctuation?(word)}"
+"Int word? #{int_word?(word)}"
+"HASH: #{WORD_TO_DIGIT[word[0...-1]]}"
+
+#################################
+# Fibonacci Numbers (Recursion) #
+#################################
+
+#F(1) = 1
+#F(2) = 1
+
+#F(n) = F(n-1) + F(n-2) where n > 2
+
+def fibonacci_recursive(n)
+  return 1 if n <= 2
+  fibonacci_recursive(n-1) + fibonacci_recursive(n-2)
+end
+
+fibonacci_recursive(1) == 1
+fibonacci_recursive(2) == 1
+fibonacci_recursive(3) == 2
+fibonacci_recursive(4) == 3
+fibonacci_recursive(5) == 5
+fibonacci_recursive(12) == 144
+fibonacci_recursive(20) == 6765
+
+
+
+##################################
+# Fibonacci Numbers (Procedural) #
+##################################
+
+def fibonacci_procedural(n)
+  fib_array = [1, 1]
+  for slot_num in (2...n)
+    fib_array << fib_array[slot_num - 1] + fib_array[slot_num - 2]
+  end
+  fib_array[-1]
+end
+
+# LS Solution
+# def fibonacci(nth)
+#   first, last = [1, 1]
+#   3.upto(nth) do
+#     first, last = [last, first + last]
+#   end
+
+#   last
+# end
+
+fibonacci_procedural(20) == 6765
+fibonacci_procedural(100) == 354224848179261915075
+
+
+
+##################################
+# Fibonacci Numbers (Last Digit) #
+##################################
+
+def fibonacci_last(n)
+  fib_n = fibonacci_procedural(n)
+  fib_n.to_s[-1].to_i
+end
+
+fibonacci_last(15)
+fibonacci_last(20)
