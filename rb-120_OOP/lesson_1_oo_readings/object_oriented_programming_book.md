@@ -702,3 +702,29 @@ We can call this method directly from the module like so: `value = Mammal.some_o
 ### Accidental Method Overriding
 
 Remember that every class inherently subclasses from `Object`. As `Object` comes with many critical methods, don't accidentally overwrite any of them or your application might break!
+
+
+## Summary of Lesson:
+
+At this point we should be familar with the basics of OOP in Ruby.
+
+**We should understand these major concepts:**
+
+- relationship between a class and an object
+- idea that a class groups behaviours (i.e. methods)
+
+At the object level:
+
+- objects do not hsare states between other objects, but they do share behaviours
+- the values in an object's instance variables (states) are different, but they can call the same instance methods (behaviours) defined in the class
+
+At the class level:
+
+- classes also have behaviours not for objects (class methods)
+
+Regarding inheritance:
+
+- classes can only sub-class from 1 parent class
+- subclassing is used to model hierarchical relationships
+- we can mix in as many modules as needed -- this is a way of implementing multiple inheritance
+- understand how sub-classing and/or mixing in modules affects the method lookup path
