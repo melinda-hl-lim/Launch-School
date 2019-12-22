@@ -1,24 +1,27 @@
-class Person
-  attr_writer :secret
-
-  def compare_secret(other_person)
-    secret == other_person.secret
+module Towable
+  def tow
+    'I can tow a trailer!'
   end
-
-  def share_secret
-    self.secret
-  end
-
-  protected
-
-  attr_reader :secret
 end
 
-person1 = Person.new
-person1.secret = 'Shh.. this is a secret!'
+class Vehicle
+  attr_reader :year
 
-person2 = Person.new
-person2.secret = 'Shh.. this is a different secret!'
+  def initialize(year)
+    @year = year
+  end
+end
 
-puts person1.share_secret
-puts person1.compare_secret(person2)
+class Truck < Vehicle
+  include Towable
+end
+
+class Car < Vehicle
+end
+
+truck1 = Truck.new(1994)
+puts truck1.year
+puts truck1.tow
+
+car1 = Car.new(2006)
+puts car1.year
