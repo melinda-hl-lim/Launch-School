@@ -1,140 +1,363 @@
 require 'pry'
 
 class Move # Move object is a collaborator of human and computer classes
-  VALUES = ['rock', 'paper', 'scissors']
+  attr_reader :value
+
+
+  WINNING_CHOICES = { 'rock' => ['scissors', 'lizard'],
+                      'paper' => ['rock', 'spock'],
+                      'scissors' => ['paper', 'lizard'],
+                      'lizard' => ['paper', 'spock'],
+                      'spock' => ['rock', 'scissors'] }.freeze
+  VALUES = WINNING_CHOICES.keys
 
   def initialize(value)
     @value = value
   end
 
   def to_s
-    @value
+    value
   end
 
   def >(other_move)
-    return other_move.scissors? if rock?
-    return other_move.rock? if paper?
-    return other_move.paper? if scissors?
+    WINNING_CHOICES[value].include?(other_move.value)
   end
 
-  def <(other_move)
-    return other_move.paper? if rock?
-    return other_move.scissors? if paper?
-    return other_move.rock? if scissors?
+  def ==(other_move)
+    value == other_move.value
   end
 
-  protected
-
-  def scissors?
-    @value == 'scissors'
-  end
-
-  def rock?
-    @value == 'rock'
-  end
-
-  def paper?
-    @value == 'paper'
+  def convert_str_to_move(str)
+    if VALUES.includes?(str)
+      move = Move.new(str)
+    else
+      # raise exception and continue on with life
+    end
   end
 end
 
 class Player
-  attr_accessor :name, :move
+  attr_accessor :name, :move, :score, :move_history
 
   def initialize
-    set_name
+    @score = 0
+    @move_history = []
+  end
+
+  def update_score
+    self.score += 1
   end
 end
 
 class Human < Player
-  def choose
-    self.move = Move.new(valid_human_choice)
+  def initialize(message)
+    super()
+    set_name(message)
+  end
+
+  def choose(message)
+    self.move = Move.new(valid_human_choice(message))
+    self.move_history << self.move
   end
 
   private
 
-  def set_name
-    n = ""
+  def set_name(message)
+    response = ""
     loop do
-      puts "What's your name?"
-      n = gets.chomp
-      break unless n.empty?
-      puts "Sorry, please tell me your name!"
+      message.prompt_name
+      response = gets.chomp.strip
+      break unless response.empty?
+      message.invalid_name
     end
-    self.name = n
+    self.name = response.capitalize
   end
 
-  def valid_human_choice
+  def valid_human_choice(message)
     choice = nil
     loop do
-      puts "Please choose one: rock, paper, or scissors."
+      message.prompt_human_choice
       choice = gets.chomp
       break if Move::VALUES.include? choice
-      puts "Sorry, that's an invalid choice."
+      message.invalid_choice
     end
     choice
   end
 end
 
 class Computer < Player
-  def choose
-    mv = Move::VALUES.sample
-    self.move = Move.new(mv)
+
+  attr_accessor :personality
+
+  def initialize(other_player) # .-.
+    super()
+    set_name
+    set_personality(other_player)
   end
+
+  def choose
+    self.move = self.personality.choose
+    self.move_history << self.move
+  end
+
+  protected
+
+
 
   private
 
   def set_name
     self.name = ['R2D2', 'Hal', 'Chappie', 'Sonny'].sample
   end
+
+  def set_personality(other_player) # Pick personality here
+    #type = Personality::TYPES.sample()
+    self.personality = Personality.new("sore_loser", other_player) # .-.
+  end
 end
 
-class RPSGame
-  attr_accessor :human, :computer
+class Personality
+  attr_reader :type, :move_pool
 
-  def initialize
-    @human = Human.new
-    @computer = Computer.new
+  TYPES = ["random",
+           "unyielding",
+           "hustler",
+           "sore_loser",
+           "cheater"]
+
+  def initialize(type, other_player) # .-.
+    @type = type
+    initialize_move_choices(@type, other_player) # .-.
   end
 
-  def play
-    display_welcome_message
-    loop do
-      human.choose
-      computer.choose
-      display_choices
-      display_winner
-      break unless play_again?
+  def choose
+    case self.type
+    when "random"
+      move_pool.sample
+    when "unyielding"
+      move_pool[0]
+    when "hustler"
+      num = rand(0..99)
+      num < 66 ? move_pool[0] : move_pool[1]
+    when "sore_loser"
+      if move_pool.length < 2
+        mv = Move::VALUES.sample
+        return Move.new(mv)
+      end
+      move_pool[-2]
+    else # it's cheater
+      mv = Move::WINNING_CHOICES[move_pool[-1].value]
+      Move.new(mv)
     end
-    display_goodbye_message
   end
 
   private
 
+  attr_writer :move_pool
+
+  def random_move
+    mv = Move::VALUES.sample
+    return Move.new(mv)
+  end
+
+  def initialize_move_choices(type, other_player) # .-.
+    case type
+    when "random"
+      @move_pool = []
+      Move::VALUES.each { |mv| @move_pool << Move.new(mv) }
+    when "unyielding"
+      @move_pool = [random_move]
+    when "hustler"
+      @move_pool = [random_move]
+      opposite_moves = Move::WINNING_CHOICES[random_move.value]
+      @move_pool << Move.new(opposite_moves[0])
+    else # it's a sore loser or cheater
+      @move_pool = other_player.move_history
+    end
+  end
+end
+
+class RPSGame
+  attr_accessor :message, :human, :computer, :game_limit, :score_limit
+
+  def initialize
+    system("clear")
+    @message = Message.new
+    message.display_welcome_message
+    @human = Human.new(message)
+    @computer = Computer.new(@human)
+    puts "The computer is of personality #{@computer.personality.type}. It has a move pool of #{@computer.personality.move_pool}."
+    set_game_limit
+    set_score_limit if game_limit
+  end
+
+  def play
+    loop do
+      system("clear")
+      human.choose(message)
+      computer.choose
+      message.display_choices(self)
+      message.move_history(self)
+      round_winner = determine_round_winner
+      display_round_winner(round_winner, message)
+      round_winner.update_score unless round_winner.nil?
+      message.display_score(self)
+      message.continue_game? if game_limit
+      break if play_again
+    end
+    system("clear")
+    display_final_results
+    message.display_goodbye_message
+  end
+
+  private
+
+  def set_game_limit
+    message.prompt_set_game_limit
+    response = ''
+    loop do
+      response = gets.chomp.strip
+      break if ['y', 'n'].include? response
+      message.invalid_choice
+    end
+    response == "y" ? @game_limit = true : @game_limit = false
+  end
+
+  def set_score_limit
+    message.prompt_score_limit
+    response = 3
+    loop do
+      response = gets.chomp
+      break if response.empty? || response.to_i > 0
+      message.invalid_score_limit
+    end
+    @score_limit = response.to_i
+  end
+
+  def determine_round_winner
+    return nil if human.move == computer.move
+    human.move > computer.move ? human : computer
+  end
+
+  def display_round_winner(winner, message)
+    winner.nil? ? message.tie : message.winner(winner)
+  end
+
+  def score_limit_reached?
+    if game_limit
+      return (human.score == score_limit) ||
+             (computer.score == score_limit)
+    end
+    false
+  end
+
+  def play_again
+    game_limit ? score_limit_reached? : !(message.play_again?)
+  end
+
+  def display_final_results
+    if human.score == computer.score
+      winner = nil
+    elsif game_limit
+      winner = human.score == score_limit ? human : computer
+    else
+      winner = human.score > computer.score ? human : computer
+    end
+    message.final_winner(winner)
+    message.display_score(self)
+  end
+end
+
+class Message
+
   def display_welcome_message
-    puts "Welcome to Rock, Paper, Scissors!"
+    puts "Welcome to the ultimate RPS-off!"
+  end
+
+  def prompt_name
+    line_break
+    puts "What's your name?"
+  end
+
+  def invalid_name
+    puts "That doesn't look like a name, silly. Please tell me your name."
+  end
+
+  def prompt_set_game_limit
+    line_break
+    puts "Would you like to battle to a certain score?"
+    puts "Once someone reaches that score, they are the winner!"
+    puts "Please choose y/n."
+  end
+
+  def prompt_score_limit
+    line_break
+    puts "What score would you like to play to?"
+  end
+
+  def invalid_score_limit
+    puts "Please enter a score (i.e. number)."
+  end
+
+  def prompt_human_choice
+    valid_choices = "#{Move::VALUES[0...-1].join(", ")} or #{Move::VALUES[-1]}"
+    puts "Please choose one: #{valid_choices}."
+  end
+
+  def invalid_choice
+    puts "Sorry, that's not a choice I understand."
+  end
+
+  def display_choices(game)
+    line_break
+    puts "#{game.human.name} chose #{game.human.move}."
+    puts "#{game.computer.name} chose #{game.computer.move}."
+  end
+
+  def display_score(game)
+    puts "#{game.human.name}'s score is #{game.human.score}"
+    puts "#{game.computer.name}'s score is #{game.computer.score}"
+  end
+
+  def move_history(game)
+    human = game.human
+    computer = game.computer
+    num_rounds = human.move_history.length
+    line_break
+    puts "Here's the plays in each round so far... "
+    num_rounds.times do |i|
+      puts "Round #{i+1}  |  #{human.move_history[i].value}  |  #{computer.move_history[i].value}"
+    end
+    line_break
+  end
+
+  def continue_game?
+    line_break
+    puts "Press enter to continue."
+    answer = gets.chomp
+  end
+
+  def tie
+    puts "It's a tie!"
+  end
+
+  def winner(winner)
+    puts "#{winner.name} won that round! Plus one to #{winner.name}'s score!"
+  end
+
+  def final_winner(winner)
+    puts "After a grueling tournament, one fighter has remained standing."
+    puts "Ladies and gentlemen, the greatest RPS-er of all time is..."
+    puts "#{winner.name}!" unless winner.nil?
+    puts "No one! It's a tie!" if winner.nil?
   end
 
   def display_goodbye_message
     puts "Thanks for playing. Bye~"
   end
 
-  def display_choices
-    puts "#{human.name} chose #{human.move}."
-    puts "#{computer.name} chose #{computer.move}."
-  end
-
-  def display_winner
-    if human.move > computer.move
-      puts "#{human.name} won!"
-    elsif human.move < computer.move
-      puts "#{computer.name} won!"
-    else
-      puts "It's a tie!"
-    end
-  end
-
   def play_again?
+    line_break
     puts "Would you like to play again? (y/n)"
     answer = nil
     loop do
@@ -144,12 +367,12 @@ class RPSGame
     end
     answer == 'y'
   end
+
+  private
+
+  def line_break
+    puts "\n"
+  end
 end
 
 RPSGame.new.play
-
-# class Rule
-#   def initialize
-#     # not sure what the "state" of a rule object should be
-#   end
-# end

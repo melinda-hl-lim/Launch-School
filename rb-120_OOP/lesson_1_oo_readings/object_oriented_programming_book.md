@@ -57,7 +57,7 @@ sparky = GoodDog.new
 
 ### Modules
 
-**Module**: a collectin of behaviours usable in other classes via *mixins*.
+**Module**: a collection of behaviours usable in other classes via *mixins*.
 
 Example: we want our `GoodDog` class to have a `speak` method, but we have other classes that we want to use a speak method with too.
 
@@ -138,7 +138,7 @@ Calling the **`new` class method** eventually leads us to the **`initialize` ins
 
 ### Instance Variables
 
-**Instance varaibles**:
+**Instance variables**:
 - has the `@` symbol in front of it
 - exists as long as the object instance exists
 - a way we tie data to objects
@@ -321,7 +321,7 @@ end
 
 ### Class Methods
 
-**Class Methods**: methods we can call directly on the calss itself without having to instantiate any objects. They are defined by prepending the method name with the reserved word `self.`.
+**Class Methods**: methods we can call directly on the class itself without having to instantiate any objects. They are defined by prepending the method name with the reserved word `self.`.
 
 Class methods contain functionality that does not pertain to individual objects -- objects contain states, and if we have a method that does not need to deal with states then we can just use a class method.
 
@@ -411,7 +411,7 @@ We want to:
 - understand exactly what `self` is
 - know how to understand what its referencing
 
-We use `self` to specify a certain scope for our program. Depending on where it's used, `self` can refere to different things.
+We use `self` to specify a certain scope for our program. Depending on where it's used, `self` can refer to different things.
 
 Two uses of `self` from within a class so far:
 1. When using `self` *within* an instance method, it references the instance (object) that called the method.
@@ -463,7 +463,7 @@ end
 ```
 We use the `<` symbol to signify that `GoodDog` class is inheriting from `Animal` class, so all methods in `Animal` are available to the `GoodDog` class.
 
-We can **override** methods provided by a superclass in the subclass because Ruby checks the object's class first for the method beore looking in the superclass.
+We can **override** methods provided by a superclass in the subclass because Ruby checks the object's class first for the method before looking in the superclass.
 
 Inheritance is great for removing duplication in code bases.
 
@@ -715,7 +715,7 @@ At this point we should be familar with the basics of OOP in Ruby.
 
 At the object level:
 
-- objects do not hsare states between other objects, but they do share behaviours
+- objects do not share states between other objects, but they do share behaviours
 - the values in an object's instance variables (states) are different, but they can call the same instance methods (behaviours) defined in the class
 
 At the class level:
