@@ -1,41 +1,3 @@
-require 'pry'
-
-class Move # Move object is a collaborator of human and computer classes
-  attr_reader :value
-
-
-  WINNING_CHOICES = { 'rock' => ['scissors', 'lizard'],
-                      'paper' => ['rock', 'spock'],
-                      'scissors' => ['paper', 'lizard'],
-                      'lizard' => ['paper', 'spock'],
-                      'spock' => ['rock', 'scissors'] }.freeze
-  VALUES = WINNING_CHOICES.keys
-
-  def initialize(value)
-    @value = value
-  end
-
-  def to_s
-    value
-  end
-
-  def >(other_move)
-    WINNING_CHOICES[value].include?(other_move.value)
-  end
-
-  def ==(other_move)
-    value == other_move.value
-  end
-
-  def convert_str_to_move(str)
-    if VALUES.includes?(str)
-      move = Move.new(str)
-    else
-      # raise exception and continue on with life
-    end
-  end
-end
-
 class Player
   attr_accessor :name, :move, :score, :move_history
 
@@ -52,17 +14,17 @@ end
 class Human < Player
   def initialize(message)
     super()
-    set_name(message)
+    get_name(message)
   end
 
   def choose(message)
-    self.move = Move.new(valid_human_choice(message))
-    self.move_history << self.move
+    self.move = Move.new(valid_human_choice(message)) # TODO: Why is `self` required for `self.move` for RPS to work ...
+    move_history << move # but `self` is not required for `move_history` or `move` down here?
   end
 
   private
 
-  def set_name(message)
+  def get_name(message)
     response = ""
     loop do
       message.prompt_name
@@ -86,33 +48,29 @@ class Human < Player
 end
 
 class Computer < Player
-
   attr_accessor :personality
 
+  # TODO: I feel uncomfortable passing other_player around...
+  # Is this okay to do? Is there an alternate solution?
   def initialize(other_player) # .-.
     super()
-    set_name
-    set_personality(other_player)
+    select_name
+    select_personality(other_player)
   end
 
   def choose
-    self.move = self.personality.choose
-    self.move_history << self.move
+    self.move = personality.choose # TODO: Same question with `self.move`, `self.personality.choose`, and `self.move_history` as the question above
+    move_history << move
   end
-
-  protected
-
-
 
   private
 
-  def set_name
+  def select_name
     self.name = ['R2D2', 'Hal', 'Chappie', 'Sonny'].sample
   end
 
-  def set_personality(other_player) # Pick personality here
-    #type = Personality::TYPES.sample()
-    self.personality = Personality.new("sore_loser", other_player) # .-.
+  def select_personality(other_player)
+    self.personality = Personality.new(Personality::TYPES.sample, other_player)
   end
 end
 
@@ -125,13 +83,16 @@ class Personality
            "sore_loser",
            "cheater"]
 
-  def initialize(type, other_player) # .-.
+  def initialize(type, other_player)
     @type = type
-    initialize_move_choices(@type, other_player) # .-.
+    initialize_move_choices(@type, other_player)
   end
 
+  # TODO: rubocop isn't happy with the complexity, ABCsize...
+  # Is there another way to make unique choose methods for each
+  # personality without having case statements?
   def choose
-    case self.type
+    case type
     when "random"
       move_pool.sample
     when "unyielding"
@@ -140,13 +101,17 @@ class Personality
       num = rand(0..99)
       num < 66 ? move_pool[0] : move_pool[1]
     when "sore_loser"
+      # For the first move, select randomly
       if move_pool.length < 2
         mv = Move::VALUES.sample
         return Move.new(mv)
       end
+      # For all other moves, use the human player's previous move choice
       move_pool[-2]
-    else # it's cheater
-      mv = Move::WINNING_CHOICES[move_pool[-1].value]
+    else # It's a cheater personality
+      # The cheater looks into the human's current choice
+      # and create a move that beat human's choice
+      mv = Move::WINNING_CHOICES[move_pool[-1].value].sample
       Move.new(mv)
     end
   end
@@ -157,7 +122,7 @@ class Personality
 
   def random_move
     mv = Move::VALUES.sample
-    return Move.new(mv)
+    Move.new(mv)
   end
 
   def initialize_move_choices(type, other_player) # .-.
@@ -177,6 +142,142 @@ class Personality
   end
 end
 
+class Move # Move object is a collaborator of human and computer classes
+  attr_reader :value
+
+  WINNING_CHOICES = { 'rock' => ['scissors', 'lizard'],
+                      'paper' => ['rock', 'spock'],
+                      'scissors' => ['paper', 'lizard'],
+                      'lizard' => ['paper', 'spock'],
+                      'spock' => ['rock', 'scissors'] }.freeze
+  VALUES = WINNING_CHOICES.keys
+
+  def initialize(value)
+    @value = value
+  end
+
+  def to_s
+    value
+  end
+
+  def >(other_move)
+    WINNING_CHOICES[value].include?(other_move.value)
+  end
+
+  def ==(other_move)
+    value == other_move.value
+  end
+end
+
+class Message
+  def display_welcome_message
+    puts "Welcome to the ultimate RPS-off!"
+  end
+
+  def prompt_name
+    line_break
+    puts "What's your name?"
+  end
+
+  def invalid_name
+    puts "That doesn't look like a name, silly. Please tell me your name."
+  end
+
+  def prompt_set_game_limit
+    line_break
+    puts "Would you like to battle to a certain score?"
+    puts "Once someone reaches that score, they are the winner!"
+    puts "Please choose y/n."
+  end
+
+  def prompt_score_limit
+    line_break
+    puts "What score would you like to play to?"
+  end
+
+  def invalid_score_limit
+    puts "Please enter a score (i.e. number)."
+  end
+
+  def prompt_human_choice
+    valid_choices = "#{Move::VALUES[0...-1].join(', ')} or #{Move::VALUES[-1]}"
+    puts "Please choose one: #{valid_choices}."
+  end
+
+  def invalid_choice
+    puts "Sorry, that's not a choice I understand."
+  end
+
+  def display_choices(game)
+    line_break
+    puts "#{game.human.name} chose #{game.human.move}."
+    puts "#{game.computer.name} chose #{game.computer.move}."
+  end
+
+  def display_score(game)
+    puts "#{game.human.name}'s score is #{game.human.score}"
+    puts "#{game.computer.name}'s score is #{game.computer.score}"
+  end
+
+  def move_history(game)
+    human = game.human
+    computer = game.computer
+    num_rounds = human.move_history.length
+    line_break
+    puts "Here's the plays in each round so far... "
+    num_rounds.times do |i|
+      display = "Round #{i + 1}".center(12) + "|"
+      display += "#{human.move_history[i].value}".center(12) + "|"
+      display += "#{computer.move_history[i].value}".center(12)
+      puts display
+    end
+    line_break
+  end
+
+  def continue_game?
+    line_break
+    puts "Press enter to continue."
+    gets.chomp
+  end
+
+  def tie
+    puts "It's a tie!"
+  end
+
+  def winner(winner)
+    puts "#{winner.name} won that round! Plus one to #{winner.name}'s score!"
+  end
+
+  def final_winner(winner)
+    puts "After a grueling tournament, one fighter has remained standing."
+    puts "Ladies and gentlemen, the greatest RPS-er of all time is..."
+    puts "#{winner.name}!" unless winner.nil?
+    puts "No one! It's a tie!" if winner.nil?
+  end
+
+  def display_goodbye_message
+    puts "Thanks for playing. Bye~"
+  end
+
+  def play_again?
+    line_break
+    puts "Would you like to play again? (y/n)"
+    answer = nil
+    loop do
+      answer = gets.chomp
+      break if ['y', 'n'].include? answer.downcase
+      puts "Sorry, please choose either y or n."
+    end
+    answer == 'y'
+  end
+
+  private
+
+  def line_break
+    puts "\n"
+  end
+end
+
 class RPSGame
   attr_accessor :message, :human, :computer, :game_limit, :score_limit
 
@@ -186,7 +287,6 @@ class RPSGame
     message.display_welcome_message
     @human = Human.new(message)
     @computer = Computer.new(@human)
-    puts "The computer is of personality #{@computer.personality.type}. It has a move pool of #{@computer.personality.move_pool}."
     set_game_limit
     set_score_limit if game_limit
   end
@@ -245,8 +345,7 @@ class RPSGame
 
   def score_limit_reached?
     if game_limit
-      return (human.score == score_limit) ||
-             (computer.score == score_limit)
+      return (human.score == score_limit) || (computer.score == score_limit)
     end
     false
   end
@@ -265,113 +364,6 @@ class RPSGame
     end
     message.final_winner(winner)
     message.display_score(self)
-  end
-end
-
-class Message
-
-  def display_welcome_message
-    puts "Welcome to the ultimate RPS-off!"
-  end
-
-  def prompt_name
-    line_break
-    puts "What's your name?"
-  end
-
-  def invalid_name
-    puts "That doesn't look like a name, silly. Please tell me your name."
-  end
-
-  def prompt_set_game_limit
-    line_break
-    puts "Would you like to battle to a certain score?"
-    puts "Once someone reaches that score, they are the winner!"
-    puts "Please choose y/n."
-  end
-
-  def prompt_score_limit
-    line_break
-    puts "What score would you like to play to?"
-  end
-
-  def invalid_score_limit
-    puts "Please enter a score (i.e. number)."
-  end
-
-  def prompt_human_choice
-    valid_choices = "#{Move::VALUES[0...-1].join(", ")} or #{Move::VALUES[-1]}"
-    puts "Please choose one: #{valid_choices}."
-  end
-
-  def invalid_choice
-    puts "Sorry, that's not a choice I understand."
-  end
-
-  def display_choices(game)
-    line_break
-    puts "#{game.human.name} chose #{game.human.move}."
-    puts "#{game.computer.name} chose #{game.computer.move}."
-  end
-
-  def display_score(game)
-    puts "#{game.human.name}'s score is #{game.human.score}"
-    puts "#{game.computer.name}'s score is #{game.computer.score}"
-  end
-
-  def move_history(game)
-    human = game.human
-    computer = game.computer
-    num_rounds = human.move_history.length
-    line_break
-    puts "Here's the plays in each round so far... "
-    num_rounds.times do |i|
-      puts "Round #{i+1}  |  #{human.move_history[i].value}  |  #{computer.move_history[i].value}"
-    end
-    line_break
-  end
-
-  def continue_game?
-    line_break
-    puts "Press enter to continue."
-    answer = gets.chomp
-  end
-
-  def tie
-    puts "It's a tie!"
-  end
-
-  def winner(winner)
-    puts "#{winner.name} won that round! Plus one to #{winner.name}'s score!"
-  end
-
-  def final_winner(winner)
-    puts "After a grueling tournament, one fighter has remained standing."
-    puts "Ladies and gentlemen, the greatest RPS-er of all time is..."
-    puts "#{winner.name}!" unless winner.nil?
-    puts "No one! It's a tie!" if winner.nil?
-  end
-
-  def display_goodbye_message
-    puts "Thanks for playing. Bye~"
-  end
-
-  def play_again?
-    line_break
-    puts "Would you like to play again? (y/n)"
-    answer = nil
-    loop do
-      answer = gets.chomp
-      break if ['y', 'n'].include? answer.downcase
-      puts "Sorry, please choose either y or n."
-    end
-    answer == 'y'
-  end
-
-  private
-
-  def line_break
-    puts "\n"
   end
 end
 
