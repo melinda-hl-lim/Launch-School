@@ -20,8 +20,7 @@ class Human < Player
   end
 
   def choose(message)
-    self.move = Move.new(valid_human_choice(message)) # TODO: Why is `self` required for `self.move` for RPS to work ...
-    move_history << move # but `self` is not required for `move_history` or `move` down here?
+    self.move = Move.new(valid_human_choice(message))
   end
 
   private
@@ -58,6 +57,7 @@ class Computer < Player
   end
 
   private
+
   attr_writer :move_pool
 
   def select_name
@@ -71,7 +71,7 @@ class Computer < Player
 end
 
 class Haphazard < Computer
-  def initialize(other_player)
+  def initialize(*)
     initialize_move_choices
     super()
   end
@@ -90,7 +90,7 @@ class Haphazard < Computer
 end
 
 class Unyielding < Computer
-  def initialize(other_player)
+  def initialize(*)
     initialize_move_choices
     super()
   end
@@ -108,7 +108,7 @@ class Unyielding < Computer
 end
 
 class Hustler < Computer
-  def initialize(other_player)
+  def initialize(*)
     initialize_move_choices
     super()
   end
@@ -126,8 +126,6 @@ class Hustler < Computer
     opposite_moves = Move::WINNING_CHOICES[random_move.value]
     @move_pool << Move.new(opposite_moves[0])
   end
-
-
 end
 
 class SoreLoser < Computer
@@ -164,9 +162,11 @@ class Cheater < Computer
   def choose
     # The cheater looks into the human's current choice
     # and create a move that beat human's choice
-    human_choice = move_pool[-1].value
-    winning_choices = Move::WINNING_CHOICES.select { |k,v| v.include? human_choice }
-    cheater_choice = winning_choices.keys.sample
+    human_move = move_pool[-1].value
+    winning_moves = Move::WINNING_CHOICES.select do |_, v|
+      v.include? human_move
+    end
+    cheater_choice = winning_moves.keys.sample
     self.move = Move.new(cheater_choice)
     move_history << move
   end
