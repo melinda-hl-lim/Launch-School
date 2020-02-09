@@ -1,3 +1,5 @@
+require 'pry'
+
 class Player
   attr_accessor :name, :move, :score, :move_history
 
@@ -48,97 +50,131 @@ class Human < Player
 end
 
 class Computer < Player
-  attr_accessor :personality
+  attr_reader :move_pool
 
-  # TODO: I feel uncomfortable passing other_player around...
-  # Is this okay to do? Is there an alternate solution?
-  def initialize(other_player) # .-.
+  def initialize
     super()
     select_name
-    select_personality(other_player)
-  end
-
-  def choose
-    self.move = personality.choose # TODO: Same question with `self.move`, `self.personality.choose`, and `self.move_history` as the question above
-    move_history << move
   end
 
   private
+  attr_writer :move_pool
 
   def select_name
     self.name = ['R2D2', 'Hal', 'Chappie', 'Sonny'].sample
   end
 
-  def select_personality(other_player)
-    self.personality = Personality.new(Personality::TYPES.sample, other_player)
-  end
-end
-
-class Personality
-  attr_reader :type, :move_pool
-
-  TYPES = ["random",
-           "unyielding",
-           "hustler",
-           "sore_loser",
-           "cheater"]
-
-  def initialize(type, other_player)
-    @type = type
-    initialize_move_choices(@type, other_player)
-  end
-
-  # TODO: rubocop isn't happy with the complexity, ABCsize...
-  # Is there another way to make unique choose methods for each
-  # personality without having case statements?
-  def choose
-    case type
-    when "random"
-      move_pool.sample
-    when "unyielding"
-      move_pool[0]
-    when "hustler"
-      num = rand(0..99)
-      num < 66 ? move_pool[0] : move_pool[1]
-    when "sore_loser"
-      # For the first move, select randomly
-      if move_pool.length < 2
-        mv = Move::VALUES.sample
-        return Move.new(mv)
-      end
-      # For all other moves, use the human player's previous move choice
-      move_pool[-2]
-    else # It's a cheater personality
-      # The cheater looks into the human's current choice
-      # and create a move that beat human's choice
-      mv = Move::WINNING_CHOICES[move_pool[-1].value].sample
-      Move.new(mv)
-    end
-  end
-
-  private
-
-  attr_writer :move_pool
-
   def random_move
     mv = Move::VALUES.sample
     Move.new(mv)
   end
+end
 
-  def initialize_move_choices(type, other_player) # .-.
-    case type
-    when "random"
-      @move_pool = []
-      Move::VALUES.each { |mv| @move_pool << Move.new(mv) }
-    when "unyielding"
-      @move_pool = [random_move]
-    when "hustler"
-      @move_pool = [random_move]
-      opposite_moves = Move::WINNING_CHOICES[random_move.value]
-      @move_pool << Move.new(opposite_moves[0])
-    else # it's a sore loser or cheater
-      @move_pool = other_player.move_history
+class Haphazard < Computer
+  def initialize(other_player)
+    initialize_move_choices
+    super()
+  end
+
+  def choose
+    self.move = move_pool.sample
+    move_history << move
+  end
+
+  private
+
+  def initialize_move_choices
+    @move_pool = []
+    Move::VALUES.each { |mv| @move_pool << Move.new(mv) }
+  end
+end
+
+class Unyielding < Computer
+  def initialize(other_player)
+    initialize_move_choices
+    super()
+  end
+
+  def choose
+    self.move = move_pool[0]
+    move_history << move
+  end
+
+  private
+
+  def initialize_move_choices
+    @move_pool = [random_move]
+  end
+end
+
+class Hustler < Computer
+  def initialize(other_player)
+    initialize_move_choices
+    super()
+  end
+
+  def choose
+    num = rand(0..99)
+    self.move = num < 66 ? move_pool[0] : move_pool[1]
+    move_history << move
+  end
+
+  private
+
+  def initialize_move_choices
+    @move_pool = [random_move]
+    opposite_moves = Move::WINNING_CHOICES[random_move.value]
+    @move_pool << Move.new(opposite_moves[0])
+  end
+
+
+end
+
+class SoreLoser < Computer
+  def initialize(other_player)
+    initialize_move_choices(other_player)
+    super()
+  end
+
+  def choose
+    if move_pool.length < 2
+      # For the first move, select randomly
+      mv = Move::VALUES.sample
+      self.move = Move.new(mv)
+    else
+      # For all other moves, use the human player's previous move choice
+      self.move = move_pool[-2]
     end
+    move_history << move
+  end
+
+  private
+
+  def initialize_move_choices(other_player)
+    @move_pool = other_player.move_history
+  end
+end
+
+class Cheater < Computer
+  def initialize(other_player)
+    initialize_move_choices(other_player)
+    super()
+  end
+
+  def choose
+    # The cheater looks into the human's current choice
+    # and create a move that beat human's choice
+    human_choice = move_pool[-1].value
+    winning_choices = Move::WINNING_CHOICES.select { |k,v| v.include? human_choice }
+    cheater_choice = winning_choices.keys.sample
+    self.move = Move.new(cheater_choice)
+    move_history << move
+  end
+
+  private
+
+  def initialize_move_choices(other_player)
+    @move_pool = other_player.move_history
   end
 end
 
@@ -281,12 +317,14 @@ end
 class RPSGame
   attr_accessor :message, :human, :computer, :game_limit, :score_limit
 
+  PERSONALITIES = [Haphazard, Unyielding, Hustler, SoreLoser, Cheater]
+
   def initialize
     system("clear")
     @message = Message.new
     message.display_welcome_message
     @human = Human.new(message)
-    @computer = Computer.new(@human)
+    @computer = PERSONALITIES.sample.new(@human)
     set_game_limit
     set_score_limit if game_limit
   end
