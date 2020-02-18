@@ -71,7 +71,7 @@ class Computer < Player
 end
 
 class Haphazard < Computer
-  def initialize(*)
+  def initialize(_)
     initialize_move_choices
     super()
   end
@@ -90,7 +90,7 @@ class Haphazard < Computer
 end
 
 class Unyielding < Computer
-  def initialize(*)
+  def initialize(_)
     initialize_move_choices
     super()
   end
@@ -108,7 +108,7 @@ class Unyielding < Computer
 end
 
 class Hustler < Computer
-  def initialize(*)
+  def initialize(_)
     initialize_move_choices
     super()
   end
