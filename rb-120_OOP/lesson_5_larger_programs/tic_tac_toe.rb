@@ -111,14 +111,24 @@ end
 
 class Computer < Player
   def select_move(board)
+    offense = offensive_move(board)
+    defense = defensive_move(board)
     valid_squares = board.unmarked_keys
-    threat = check_for_threats(board, valid_squares)
-    threat ? threat : valid_squares.sample
+
+    offense || defense || valid_squares.sample
   end
 
-  def check_for_threats(board, valid_squares)
+  def defensive_move(board)
+    one_empty_square_in_a_line(board, TTTGame::HUMAN_MARKER)
+  end
+
+  def offensive_move(board)
+    one_empty_square_in_a_line(board, TTTGame::COMPUTER_MARKER)
+  end
+
+  def one_empty_square_in_a_line(board, marker)
     Board::WINNING_LINES.each do |line|
-      if board.two_in_a_line?(line, TTTGame::HUMAN_MARKER)
+      if board.two_in_a_line?(line, marker)
         markers = board.markers_in_line(line)
         initial_marker = markers.find_index(Square::INITIAL_MARKER)
         return line[initial_marker] unless initial_marker.nil?
