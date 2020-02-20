@@ -6,6 +6,7 @@ class Board
   WINNING_LINES = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] + # rows
                   [[1, 4, 7], [2, 5, 8], [3, 6, 9]] + # columns
                   [[1, 5, 9], [3, 5, 7]]              # diagonals
+  MIDDLE_SQUARE = 5
 
   def initialize
     @squares = {}
@@ -41,13 +42,6 @@ class Board
     markers.count(marker) == 2
   end
 
-  def three_identical_markers?(line)
-    markers_in_line = line.select(&:marked?).collect(&:marker)
-    return false if markers_in_line.size != 3
-
-    markers_in_line.min == markers_in_line.max
-  end
-
   # Return winning marker or nil
   def winning_marker
     WINNING_LINES.each do |line|
@@ -77,8 +71,18 @@ class Board
     puts "   #{@squares[7]}   |   #{@squares[8]}   |   #{@squares[9]}   "
     puts "       |       |"
   end
+  # rubocop:enable Metrics/AbcSize
+
+  private
+
+  def three_identical_markers?(line)
+    markers_in_line = line.select(&:marked?).collect(&:marker)
+    return false if markers_in_line.size != 3
+
+    markers_in_line.min == markers_in_line.max
+  end
 end
-# rubocop:enable Metrics/AbcSize
+
 
 class Square
   INITIAL_MARKER = " "
@@ -115,7 +119,7 @@ class Computer < Player
     defense = defensive_move(board)
     valid_squares = board.unmarked_keys
 
-    offense || defense || valid_squares.sample
+    offense || defense || pick_middle_square(board) || valid_squares.sample
   end
 
   def defensive_move(board)
@@ -137,15 +141,19 @@ class Computer < Player
 
     nil
   end
+
+  def pick_middle_square(board)
+    board.squares[Board::MIDDLE_SQUARE].marked? ? nil : Board::MIDDLE_SQUARE
+  end
 end
 
 class Human < Player
-  def select_move(valid_squares_keys)
-    puts "Please choose a square: (#{valid_squares_keys.join(', ')})"
+  def select_move(valid_squares)
+    puts "Please choose a square: (#{valid_squares.join(', ')})"
     square_num = ""
     loop do
       square_num = gets.chomp.to_i
-      break if valid_squares_keys.include?(square_num)
+      break if valid_squares.include?(square_num)
 
       puts "Sorry, that's not a valid choice."
     end
@@ -158,7 +166,7 @@ class TTTGame
   COMPUTER_MARKER = "O"
   FIRST_TO_MOVE = HUMAN_MARKER
 
-  attr_reader :board, :human, :computer
+  attr_reader :board, :human, :computer, :round, :game_limit
 
   def play
     display_welcome_message
@@ -171,7 +179,7 @@ class TTTGame
         clear_screen_and_display_board if human_turn?
       end
       display_result
-      break unless play_again?
+      break unless next_round?
 
       reset
       display_play_again_message
@@ -181,11 +189,20 @@ class TTTGame
 
   private
 
+  attr_writer :round
+
   def initialize
+    # Set up game pieces
     @board = Board.new
     @human = Human.new(HUMAN_MARKER)
+    # ^ Input name
     @computer = Computer.new(COMPUTER_MARKER)
     @current_marker = FIRST_TO_MOVE
+
+    # Choose game settings
+    @tournament = play_to_game_limit?
+    @game_limit = set_game_limit if @tournament
+    @round = 1
   end
 
   def clear
@@ -214,9 +231,9 @@ class TTTGame
   end
 
   def current_player_moves
-    valid_choices_keys = board.unmarked_keys
+    valid_choices = board.unmarked_keys
     if human_turn?
-      square_num = human.select_move(valid_choices_keys)
+      square_num = human.select_move(valid_choices)
       board[square_num] = human.marker
       @current_marker = COMPUTER_MARKER
     else
@@ -230,6 +247,8 @@ class TTTGame
     @current_marker == HUMAN_MARKER
   end
 
+  # TODO: This method is doing more than displaying the round's result.
+  # Break it down some more.
   def display_result
     display_board
 
@@ -241,6 +260,37 @@ class TTTGame
     else
       puts "It's a tie!"
     end
+
+    self.round += 1
+  end
+
+  def play_to_game_limit?
+    puts "Would you like to play a tournament? \n
+          The tournament winner is the first to win X rounds."
+    answer = ""
+    loop do
+      answer = gets.chomp.downcase
+      break if %(y n).include? answer
+
+      puts "Sorry, please answer either 'y' or 'n'."
+    end
+    answer == 'y'
+  end
+
+  def set_game_limit
+    puts "How many rounds would you like in this tournament?"
+    answer = ""
+    loop do
+      answer = gets.chomp.to_i
+      break if answer > 0
+
+      puts "Please enter the NUMBER of rounds you'd like to play."
+    end
+    answer
+  end
+
+  def next_round?
+    @tournament ? game_limit_reached? : play_again?
   end
 
   def play_again?
@@ -253,6 +303,10 @@ class TTTGame
       puts "Sorry, please answer either 'y' or 'n'."
     end
     answer == 'y'
+  end
+
+  def game_limit_reached?
+    round == game_limit
   end
 
   def reset
