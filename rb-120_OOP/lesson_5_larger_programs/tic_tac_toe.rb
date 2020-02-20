@@ -107,9 +107,11 @@ end
 
 class Player
   attr_reader :marker
+  attr_accessor :score
 
   def initialize(marker)
     @marker = marker
+    @score = 0
   end
 end
 
@@ -121,6 +123,8 @@ class Computer < Player
 
     offense || defense || pick_middle_square(board) || valid_squares.sample
   end
+
+  private
 
   def defensive_move(board)
     one_empty_square_in_a_line(board, TTTGame::HUMAN_MARKER)
@@ -166,7 +170,7 @@ class TTTGame
   COMPUTER_MARKER = "O"
   FIRST_TO_MOVE = HUMAN_MARKER
 
-  attr_reader :board, :human, :computer, :round, :game_limit
+  attr_reader :board, :human, :computer, :round, :winning_score
 
   def play
     display_welcome_message
@@ -200,8 +204,8 @@ class TTTGame
     @current_marker = FIRST_TO_MOVE
 
     # Choose game settings
-    @tournament = play_to_game_limit?
-    @game_limit = set_game_limit if @tournament
+    @tournament = play_to_winning_score?
+    @winning_score = set_winning_score if @tournament
     @round = 1
   end
 
@@ -254,8 +258,10 @@ class TTTGame
 
     case board.winning_marker
     when human.marker
+      human.score += 1
       puts "You won!"
     when computer.marker
+      computer.score += 1
       puts "The computer won!"
     else
       puts "It's a tie!"
@@ -264,9 +270,9 @@ class TTTGame
     self.round += 1
   end
 
-  def play_to_game_limit?
-    puts "Would you like to play a tournament? \n
-          The tournament winner is the first to win X rounds."
+  def play_to_winning_score?
+    puts "Would you like to play a tournament?"
+    puts "The tournament winner is the first to win X rounds."
     answer = ""
     loop do
       answer = gets.chomp.downcase
@@ -277,20 +283,20 @@ class TTTGame
     answer == 'y'
   end
 
-  def set_game_limit
-    puts "How many rounds would you like in this tournament?"
+  def set_winning_score
+    puts "What would you like the winning score to be in this tournament?"
     answer = ""
     loop do
       answer = gets.chomp.to_i
       break if answer > 0
 
-      puts "Please enter the NUMBER of rounds you'd like to play."
+      puts "Please enter the score (i.e. a NUMBER) you would like to play to."
     end
     answer
   end
 
   def next_round?
-    @tournament ? game_limit_reached? : play_again?
+    @tournament ? !(winning_score_reached?) : play_again?
   end
 
   def play_again?
@@ -305,8 +311,9 @@ class TTTGame
     answer == 'y'
   end
 
-  def game_limit_reached?
-    round == game_limit
+  def winning_score_reached?
+    binding.pry
+    human.score == winning_score || computer.score == winning_score
   end
 
   def reset
