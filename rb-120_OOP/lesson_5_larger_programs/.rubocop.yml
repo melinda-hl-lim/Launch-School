@@ -20,10 +20,6 @@ Style/BlockComments:
   Description: 'Do not use block comments.'
   Enabled: false
 
-Style/BracesAroundHashParameters:
-  Description: Forces certain brace styles when the last argument is a hash.
-  Enabled: false
-
 Style/ClassVars:
   Description: 'Checks for uses of class variables.'
   Enabled: false
