@@ -40,21 +40,31 @@ class Participant
     puts "TOTAL SCORE: #{score}"
     puts "NUMBER CARDS IN HAND: #{hand.length}"
     puts "CARDS IN HAND: "
-    @hand.each(&:display)
+    hand.each(&:display)
     line_break
   end
 
-  def update_score(card)
-    card_value = card.value.to_i
-    self.score += if card_value == 0
-                    send(card.value.downcase)
-                  else
-                    card_value
-                  end
+  def update_score
+    self.score = 0
+    order_cards_in_hand
+    calculate_total_score
+  end
+
+  def order_cards_in_hand
+    not_aces = hand.filter { |card| card.value != "A" }
+    aces = hand.filter { |card| card.value == "A" }
+    self.hand = not_aces + aces
+  end
+
+  def calculate_total_score
+    hand.each do |card|
+      card_value = card.value.to_i
+      self.score += card_value == 0 ? send(card.value.downcase) : card_value
+    end
   end
 
   def a
-    @score + 11 > 21 ? 1 : 11
+    score + 11 > 21 ? 1 : 11
   end
 
   def score_of_ten
@@ -68,23 +78,24 @@ class Participant
   def busted?
     score > 21
   end
-
-  def seventeen?
-    score == 17
-  end
 end
 
 class Dealer < Participant
   NAMES = %w(Bryce Edward Tommy).freeze
+  DEALER_LIMIT = 17
 
   def initialize
     super(NAMES.sample)
   end
 
   def choose_move
-    if score >= 17 # TODO: self.seventeen?
+    if score > DEALER_LIMIT
+      puts "#{name} chose to stay"
+      pause(3)
       "stay"
     else
+      puts "#{name} chose to hit!"
+      pause(3)
       "hit"
     end
   end
@@ -216,9 +227,9 @@ class TwentyOneGame
     computer.display_hand
   end
 
-  def display_current_player(current_player)
+  def display_current_player(player)
     line_break
-    puts "Now it's #{current_player}'s turn to shine~"
+    puts "Now it's #{player}'s turn to shine~"
     line_break
   end
 
