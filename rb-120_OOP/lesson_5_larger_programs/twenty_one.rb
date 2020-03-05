@@ -31,7 +31,7 @@ class Participant
 
   def add_card_to_hand(card)
     hand << card
-    update_score(card)
+    update_score
   end
 
   def display_hand
