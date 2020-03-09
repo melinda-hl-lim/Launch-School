@@ -13,6 +13,7 @@ When defining a class, we focus on two things:
 **Def'n Instantiation.** The workflow of creating a new object/instance from a class
 
 *Side note:* Everything in Ruby are objects except methods and blocks
+
 *Side note:* Every class we create subclasses from the Ruby class `Object`
 
 
@@ -33,9 +34,8 @@ When defining a class, we focus on two things:
 **Def'n Instance methods.**
 
 **Def'n Class methods.** Methods we can call directly on the class itself without having to instantiate any objects
-
-    - When defining a class method, prepend the method name with `self`
-    - Class methods contain functionality that does not pertain to individual objects (i.e. a method that doesn't deal with any objects' states)
+- When defining a class method, prepend the method name with `self`
+- Class methods contain functionality that does not pertain to individual objects (i.e. a method that doesn't deal with any objects' states)
 
 
 ## Referencing and setting instance variables vs. using getters and setters []
@@ -52,8 +52,7 @@ Example: We create a setter method for entering a value in `@ssn` - this setter 
 **Def'n Inheritance.** The concept referencing a class inheriting behaviour from another class (the *superclass*)
 
 **Def'n Encapsulation.** Hiding pieces of functionality and making it unavailable to the rest of the code base
-
-    - Provides protection for data so they cannot be manipulated in unexpected ways
+- Provides protection for data so they cannot be manipulated in unexpected ways
 
 **Def'n Polymorphism.** The ability for data to be represented in multiple forms  
 
@@ -61,9 +60,8 @@ Example: We create a setter method for entering a value in `@ssn` - this setter 
 ## Modules []
 
 **Def'n Module.** A collection of behaviours usable in other classes via *mixins*
-
-    - A module is **"mixed in"** to a class using the `include` method invocation
-    - Modules provide another way to apply polymorphic structures
+- A module is **"mixed in"** to a class using the `include` method invocation
+- Modules provide another way to apply polymorphic structures
 
 
 ## Method lookup path []
@@ -83,9 +81,8 @@ Example: We create a setter method for entering a value in `@ssn` - this setter 
 ### More about self []
 
 `self` can reference different things depending on the context. 
-
-    - Inside of an instance method in a class, `self` references the calling object of the method
-    - Outside of an instance method in a class, `self` references the class itself
+- Inside of an instance method in a class, `self` references the calling object of the method
+- Outside of an instance method in a class, `self` references the class itself
 
 
 ## Reading OO code []
@@ -117,42 +114,36 @@ Example: We create a setter method for entering a value in `@ssn` - this setter 
 ## Classes and Objects
 
 Classes define objects. Objects are created from classes. 
-
-    - Class is to Object, as Blueprint is to House 
-    - Classes define the attributes and behaviours of its objects
+- Class is to Object, as Blueprint is to House 
+- Classes define the attributes and behaviours of its objects
 
 When defining a class, we focus on two things: 
+- States: track attributes for individual objects 
+- Behaviours: what objects are capable of doing
 
-    - States: track attributes for individual objects 
-    - Behaviours: what objects are capable of doing
-
-#### Variable Types
+### Variable Types
 
 *Constants*:
-
-    - variables we never want to change
+- variables with values we never want to change
 
 *Class Variables*:
-
-    - keep track of class level details
-    - created by prepending `@@` symbol
-    - can be accessed from within instance methods
+- keep track of class level details
+- created by prepending `@@` symbol
+- can be accessed from within instance methods
 
 *Instance Variables*:
+- keep track of objects' unique states
+- are scoped at the object (instance) level
+- exist as long as the object instance exists
 
-    - keep track of objects' unique states
-    - are scoped at the object (instance) level
-    - exist as long as the object instance exists
 
-
-#### Instance Methods
+### Instance Methods
 
 *Instance Methods*:
+- expose behaviours for objects
+- are defined in a class and are available to objects of that class
 
-    - expose behaviours for objects
-    - defined in a class and are available to objects of that class
-
-**Def'n Instantiation**: the entire workflow of creating a new object (an instace). An object is returned by calling the *class method* `new`
+**Def'n Instantiation**: the entire workflow of creating a new object (an instance). An object is returned by calling the *class method* `new`.
 
 **Initializing a New Object**
 
@@ -163,22 +154,19 @@ Calling the `new` *class* method leads us to the `initialize` *instance* method.
 **Accessor Methods**
 
 Accessor methods:
-
-    - allow us to expose and change an object's state
-    - are instance methods
-    - Note: we can use these methods from within the class
+- allow us to expose and change an object's state
+- are instance methods
+- Note: we can use these methods from within the class
 
 *Getter* methods allow us to access values stored in instance variables.
 
 *Setter* methods allow us to set values stored in instance variables.
+- With ruby syntactical sugar, a setter method `name` is defined as `def name=(n)` but can be called as `name = Puppi'`
+- When invoking a setter method from inside the class, we need to call it with `self` (ex: `self.name = 'Puppi'`). Otherwise Ruby will think we're initializing local variables
 
-    - With ruby syntactical sugar, a setter method `name` is defined as `def name=(n)` but can be called as `name = Puppi'`
-    - When invoking a setter method from inside the class, we need to call it with `self` (ex: `self.name = 'Puppi'`). Otherwise Ruby will think we're initializing local variables
-
-*`attr_accessor`*: a method provided by Ruby to automatically create getter and setter methods
-
-    - *`attr_reader`*: Ruby method to create a getter method
-    - *`attr_writer`*: Ruby method to create a setter method
+**`attr_accessor`**: a method provided by Ruby to automatically create getter and setter methods
+- *`attr_reader`*: Ruby method to create a getter method
+- *`attr_writer`*: Ruby method to create a setter method
 
 **The `to_s` Method**
 
@@ -188,20 +176,18 @@ Accessor methods:
 
 Side note: calling `p puppi` is the same as `puts puppi.inspect`
 
-#### Class Methods
+### Class Methods
 
 *Class Methods*:
+- can be called directly on the class itself with no instances of class
+- are defined by prepending method name with reserved word `self`
+- contain functionality not pertaining to individual objects (i.e. does not deal with states of an object)
 
-    - can be called directly on the class itself with no instances of class
-    - are defined by prepending method name with reserved word `self`
-    - contain functionality not pertaining to individual objects (i.e. does not deal with staes of an object)
-
-#### More About `self`
+### More About `self`
 
 We use `self` to specify a certain scope for our program. Depending on when it's used, `self` can refer to different things:
-
-    - *within* an instance method inside the class, `self` references the instance (object) that called the method
-    - *outside* an instance method, `self` references the class and can be used to define class methods
+- *within* an instance method inside the class, `self` references the instance (object) that called the method
+- *outside* an instance method, `self` references the class and can be used to define class methods
 
 
 ---
