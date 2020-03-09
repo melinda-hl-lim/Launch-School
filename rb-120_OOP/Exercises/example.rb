@@ -1,64 +1,33 @@
 require 'pry'
 
-class AuthenticationError < StandardError; end
+class Customer; end
 
-# A mock search engine
-# that returns a random number instead of an actual count.
-class SearchEngine
-  def self.count(query, api_key)
-    unless valid?(api_key)
-      raise AuthenticationError, 'API key is not valid.' 
-      return 
-    end
+class Order; end
 
-    rand(200_000)
-  end
+class MealItem; end
 
-  private
-
-  def self.valid?(key)
-    key == 'LS1A'
-  end
+class Burger < MealItem
+  OPTIONS = {
+    '1' => { name: 'LS Burger', cost: 3.00 },
+    '2' => { name: 'LS Cheeseburger', cost: 3.50 },
+    '3' => { name: 'LS Chicken Burger', cost: 4.50 },
+    '4' => { name: 'LS Double Deluxe Burger', cost: 6.00 }
+  }
 end
 
-module DoesItRock
-  API_KEY = 'LS1AP'
-
-  class NoScore; end
-
-  class Score
-    def self.for_term(term)
-      positive = SearchEngine.count(%{"#{term} rocks"}, API_KEY).to_f
-      negative = SearchEngine.count(%{"#{term} is not fun"}, API_KEY).to_f
-
-      positive / (positive + negative)
-    rescue ZeroDivisionError
-      NoScore
-    end
-  end
-
-  def self.find_out(term)
-
-    score = Score.for_term(term)
-
-    case score
-    when 0...0.5
-      "#{term} is not fun."
-    when 0.5
-      "#{term} seems to be ok..."
-    when 0.51...1
-      "#{term} rocks!"
-    else
-      "No idea about #{term}..."
-    end
-
-  rescue StandardError => e
-    e.message
-  end
+class Side < MealItem
+  OPTIONS = {
+    '1' => { name: 'Fries', cost: 0.99 },
+    '2' => { name: 'Onion Rings', cost: 1.50 }
+  }
 end
 
-# Example (your output may differ)
-
-puts DoesItRock.find_out('Sushi')       # Sushi seems to be ok...
-puts DoesItRock.find_out('Rain')        # Rain is not fun.
-puts DoesItRock.find_out('Bug hunting') # Bug hunting rocks!
+class Drink < MealItem
+  OPTIONS = {
+    '1' => { name: 'Cola', cost: 1.50 },
+    '2' => { name: 'Lemonade', cost: 1.50 },
+    '3' => { name: 'Vanilla Shake', cost: 2.00 },
+    '4' => { name: 'Chocolate Shake', cost: 2.00 },
+    '5' => { name: 'Strawberry Shake', cost: 2.00 }
+  }
+end
