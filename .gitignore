@@ -1,0 +1,4 @@
+# Ignore all test-related files
+**/rb-120_OOP/dnd.rb
+
+**/.DS_Store

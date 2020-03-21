@@ -337,3 +337,139 @@ class GuessingGame
   end
 end
 ```
+
+## 7. Number Guesser Part 2
+
+``` ruby
+class GuessingGame
+  
+  def initialize(min, max)
+    @min = min
+    @max = max
+    select_winning_number(min, max)
+    establish_guess_limit
+    @guessed = false
+  end
+
+  def play
+    loop do 
+      display_remaining_guesses
+      guess = prompt_player_guess
+      evaluate_guess_accuracy(guess)
+      update_remaining_guesses
+      break if game_over?
+    end
+  end
+
+  private
+
+  attr_reader :winning_number, :min, :max
+  attr_accessor :guesses_remaining, :guessed
+
+  def select_winning_number(min, max)
+    @winning_number = rand(min..max)
+  end
+
+  def establish_guess_limit
+    size_of_range = max - min
+    @guesses_remaining = Math.log2(size_of_range).to_i + 1
+  end
+
+  def display_remaining_guesses
+    puts "You have #{guesses_remaining} guesses remaining."
+  end
+
+  def prompt_player_guess
+    puts "Enter a number between #{min} and #{max}: "
+    guess = ""
+    loop do
+      guess = gets.chomp.to_i
+      break if (min..max).include?(guess)
+      puts "Invalid guess. Enter a number between #{min} and #{max}: "
+    end
+    guess
+  end
+
+  def evaluate_guess_accuracy(guess)
+    if guess == winning_number
+      puts "Thats the number!" 
+      puts "You won!"
+      self.guessed = true
+    else
+      result = guess < winning_number ? "low" : "high"
+      puts "Your guess is too #{result}."
+      puts ""
+    end
+  end
+
+  def update_remaining_guesses
+    self.guesses_remaining = guesses_remaining - 1
+  end
+
+  def game_over?
+    guessed || guesses_remaining == 0
+  end
+end
+
+game = GuessingGame.new(1, 1000)
+game.play
+```
+
+## 8. Highest and Lowest Ranking Cards
+
+``` ruby
+class Card
+  include Comparable 
+
+  attr_reader :suit
+
+  FACECARD_VALUES = {J: 11, Q: 12, K: 13, A: 14}
+
+  def initialize(value, suit)
+    @value = value
+    @suit = suit
+  end
+
+  def value
+    FACECARD_VALUES.fetch(@value.to_sym, @value)
+  end
+
+  def <=>(other)
+    self.value <=> other.value
+  end
+end
+```
+
+## 9. Deck of Cards
+
+``` ruby
+class Deck
+  RANKS = ((2..10).to_a + %w(Jack Queen King Ace)).freeze
+  SUITS = %w(Hearts Clubs Diamonds Spades).freeze
+
+  attr_reader :cards
+
+  def initialize
+    reset_and_shuffle
+  end
+
+  def draw
+    reset_and_shuffle if cards.empty?
+    cards.pop
+  end
+
+  private
+
+  def reset_and_shuffle
+    @cards = []
+    RANKS.each do |rank|
+      SUITS.each do |suit|
+        @cards << Card.new(rank, suit)
+      end
+    end
+    @cards.shuffle!
+  end
+end
+```
+
+## 10. Poker

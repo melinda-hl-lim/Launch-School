@@ -89,8 +89,10 @@ Example: We create a setter method for entering a value in `@ssn` - this setter 
 
 ## Fake operators and equality []
 
-## Truthiness []
+See the table here: https://launchschool.com/lessons/d2f05460/assignments/9a7db2ee
 
+## Truthiness []
+c
 ## Working with collaborator objects []
 
 
