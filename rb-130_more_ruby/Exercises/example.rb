@@ -1,14 +1,17 @@
-def count(collection)
-  counter = 0
-  collection.each do |elem|
-    counter += 1 if yield(elem)
+require 'pry'
+
+def greatestProduct(number)
+  digits = number.split("").map(&:to_i)
+  products = []
+  last_combo = number.length - 5
+
+  digits.each_with_index do |digit, idx|
+    next if idx > last_combo
+    binding.pry
+    products << digits[idx...idx+5].reduce(&:*)
   end
-  counter
+
+  products.max
 end
 
-puts count([1,2,3,4,5]) { |value| value.odd? } == 3
-puts count([1,2,3,4,5]) { |value| value % 3 == 1 } == 2
-puts count([1,2,3,4,5]) { |value| true } == 5
-puts count([1,2,3,4,5]) { |value| false } == 0
-puts count([]) { |value| value.even? } == 0
-puts count(%w(Four score and seven)) { |value| value.size == 5 } == 2
+puts greatestProduct("123834539327238239583") #3240

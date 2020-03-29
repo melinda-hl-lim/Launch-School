@@ -1,4 +1,5 @@
 # Ignore all test-related files
 **/rb-120_OOP/dnd.rb
+**/rb-130_more_ruby/test/*
 
 **/.DS_Store

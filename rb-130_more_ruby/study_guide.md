@@ -101,6 +101,19 @@ Method `Symbol#to_proc` returns a `Proc` object which will execute the ethod bas
 ## Core Tools/Packaging Code
 
 ## [ ] Purpose of core tools
+
+**Ruby Version Managers:** programs that let you install, manage and use multiple versions of Ruby. 
+- RVMs are at the "top level" of tools
+
+**Gems:** packages of code that you can download, install and use in your Ruby programs from the command line. 
+
+**Bundler:** a Gem that is a Gem dependency manager. Specifically, it lets you install multiple versions of each Gem under a specific version of Ruby and then use the proper version in your app.
+- Bundler looks at the `Gemfile` to determine what version of Ruby to use and which Gems you require
+- After running `bundle install`, Bundler generates a `Gemfile.lock` that describes the actual versions of each Gem your app needs
+
+**Rake:** a Ruby Gem that automates many common functions required to build, test, package, and install programs
+- `Rake` comes with every modern Ruby installation 
+
 ## [ ] Gemfiles
 
 ---
