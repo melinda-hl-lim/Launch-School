@@ -41,7 +41,7 @@ There are a large number of different protocol for network communications mainly
 1. Different protocols were developed to *address different aspects* of network communication
 2. Different protocols were developed to *address the same aspects* of network communication, but in a *different way or for a specific use-case*
 
-### Different Asppects of Communication
+### Different Aspects of Communication
 
 *Syntactical rules* govern the structure of the message.
 For example:
@@ -96,7 +96,7 @@ The data payload is the *key to the way encapsulation is implemented*.
 
 - The benefit of this approach is the separation it creates between the protocols at different layers. 
     - A protocol at one layer doesn't need to know anything about how a protocol at another layer is implemented.
-    - It just knows it needs to encapsulate some data from teh layer above and provide the result to the layer below.
+    - It just knows it needs to encapsulate some data from the layer above and provide the result to the layer below.
 
 
 ## The Physical Network
@@ -105,9 +105,9 @@ Model layers:
 - OSI: Physical Layer - Layer 1
 - Internet Protocol Suite: no dedicated layer, but touches on some aspects of physical network in the Link layer
 
-The 'physical' network is made of tangible pieces such as networked deices, cables, wires, eletricity, radio waves, light, ...
+The 'physical' network is made of tangible pieces such as networked deices, cables, wires, electricity, radio waves, light, ...
 
-The limitations of the physical world determine the physical characteristics ofa  network, and thus impact how protocols function further up at the conceptual level (i.e. top of model). 
+The limitations of the physical world determine the physical characteristics of a network, and thus impact how protocols function further up at the conceptual level (i.e. top of model). 
 
 ### Bits and Signals
 
@@ -125,7 +125,7 @@ Two main characteristics in terms of the performance of a phsyical network are *
 
 There are different types of delay that, all together, determine the overall latency of a network connection.
 - **Propagation delay:** the amount of time it takes a message to travel from the sender to the receiver (i.e. distance / speed).
-- **Transmission delay:** the amount fo time it takes to push the data onto the link, a segment/piece of the physical network that connects point A to B.
+- **Transmission delay:** the amount of time it takes to push the data onto the link, a segment/piece of the physical network that connects point A to B.
 - **Processing delay:** data travelling across the physical network doesn't directly cross from one link to another, but is processed in various ways.
 - **Queuing delay:** network devices (ex: routers) can only process so much data at one time. When it's at full processing capacity, the router queues/buffers the data. 
 
@@ -172,8 +172,8 @@ Different 'fields' of data have specific lengths in bytes and appear in a set or
 
 [ethernet_frame]: https://da77jsbdz4r05.cloudfront.net/images/ls170/data-link-layer-frame-structure.png
 
-- **Preamble and SFD:** The Preamble and Start of Frame Delimiter (SFD/SOF) aren't considered part of the actual frame; they're sent priot to the frame as a synchronization measure to notify the receiving device to expect frame data and to indentify the start point of the data.
-- **Source and Destination MAC address:** The next two fields each six bytes (48 bits) long. The source address is the address of the device which created the frame, and teh destination address is the address of the device for which the data is intended.
+- **Preamble and SFD:** The Preamble and Start of Frame Delimiter (SFD/SOF) aren't considered part of the actual frame; they're sent prior to the frame as a synchronization measure to notify the receiving device to expect frame data and to indentify the start point of the data.
+- **Source and Destination MAC address:** The next two fields each six bytes (48 bits) long. The source address is the address of the device which created the frame, and the destination address is the address of the device for which the data is intended.
 - **Length:** This field indicates the size of the data payload (two bytes/16 bits).
 - **DSAP, SSAP, Control:** These three fields are each one byte (8 bits) long. The DSAP and SSAP fields identify the Network Protocol used for the Data Payload. The Control field provides information about the specific communication mode for the frame, thus helping facilitate flow control.
 - **Data Payload:** This contains the entire PDU from the layer above.
@@ -190,7 +190,7 @@ Ethernet specifies an *interframe gap (IFG)*, a brief pause between the transmis
 
 ### MAC Addresses
 
-MAC Addresses are linked to a specific physical device - these addresses are assignmed by the manufacturer. It's sometimes referred to as *physical address* or *burned-in address*. 
+MAC Addresses are linked to a specific physical device - these addresses are assigned by the manufacturer. It's sometimes referred to as *physical address* or *burned-in address*. 
 
 In a network where a hub connects the devices, each device receives the frame, checks the MAC address, and ignores the frame if the recipient address doesn't match its address. This is inefficient and not used often nowadays.
 
@@ -227,7 +227,7 @@ The PDU within the IP Protcol is referred to as a *packet*. Packets are comprise
 
 Some important header fields to keep in mind are:
 - Version: version of the Internet Protocol used
-- ID, Flags, Fragment Offset: these fields relate to fragmentation in the case that the Transport layer PDU istoo large to be sent as one packet and needs to be sent as multiple packets and reassembled by the recipient
+- ID, Flags, Fragment Offset: these fields relate to fragmentation in the case that the Transport layer PDU is too large to be sent as one packet and needs to be sent as multiple packets and reassembled by the recipient
 - TTL: Time to Live value in number of network 'hops' - ensures that any packets that don't reach their destination aren't left to endlessly bounce around the network
 - Protocol: indicates the protocol used for the data payload
 - Checksum: error-checking value to help the destination device know if it should drop the packet (IP doesn't handle retransmission)

@@ -67,20 +67,20 @@ One socket object defined by the IP address of the host machine and the port ass
 
 An example of a connection-oriented networks communication:
 
-![connection-oriented network communication][connection_oriented_]
+![connection-oriented network communication][connection_oriented]
 
 [connection-oriented]: https://da77jsbdz4r05.cloudfront.net/images/ls170/transport-comms-between-processes-connection-oriented.png
 
 Like a connectionless network, you could have a socket objected defined by the host IP and process port. However, when a message arrives we see the implementation difference. 
 
-When a message arrives, we instantiatea new socket object defined by the source port, soure IP, dstination port, and destination IP. The new socket object listens specifically for messages where all four pieces of information match, commonly referred to as a four-tuple. 
+When a message arrives, we instantiate a new socket object defined by the source port, soure IP, destination port, and destination IP. The new socket object listens specifically for messages where all four pieces of information match, commonly referred to as a four-tuple. 
 
 The connection-oriented networks communication creates a dedicated virtual connection for communication between specific processes. A benefit: we can more easily put rules in place for managing the communication such as the order of messages, acknolwedgements of receipt, retransmission of messages, etc. These additional communication rules add more reliability to the communication.
 
 
 ## Network Reliability
 
-Because the protocols operating in the lower layers (ex: )Ethernet and IP) do not replace any data that was lost, these layers of the model create an *unreliable communication channel*. 
+Because the protocols operating in the lower layers (ex: Ethernet and IP) do not replace any data that was lost, these layers of the model create an *unreliable communication channel*. 
 
 To create a reliable channel, we need to develop a protocol to ensure that all the data sent is received in the correct order. 
 
