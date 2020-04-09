@@ -69,7 +69,7 @@ An example of a connection-oriented networks communication:
 
 ![connection-oriented network communication][connection_oriented]
 
-[connection-oriented]: https://da77jsbdz4r05.cloudfront.net/images/ls170/transport-comms-between-processes-connection-oriented.png
+[connection_oriented]: https://da77jsbdz4r05.cloudfront.net/images/ls170/transport-comms-between-processes-connection-oriented.png
 
 Like a connectionless network, you could have a socket objected defined by the host IP and process port. However, when a message arrives we see the implementation difference. 
 

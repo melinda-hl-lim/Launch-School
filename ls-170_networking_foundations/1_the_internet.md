@@ -37,7 +37,7 @@ The internet is a vast number of these networks connected together. Between the 
 
 **Def'n Protocols.** A set of rules governing the exchange or transmission of data.
 
-There are a large number of different protocol for network communications mainly becuase:
+There are a large number of different protocol for network communications mainly because:
 1. Different protocols were developed to *address different aspects* of network communication
 2. Different protocols were developed to *address the same aspects* of network communication, but in a *different way or for a specific use-case*
 
