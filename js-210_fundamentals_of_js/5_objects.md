@@ -99,7 +99,7 @@ let myObj = {
 };
 ```
 
-*Arrow functions and methods*: it's not a good idea since arrow functions have subtle behaviour that makes them unsuitable for use as methods. 
+*Arrow functions and methods*: it's not a good idea to define methods with arrow functions since arrow functions have subtle behaviour that makes them unsuitable for use as methods. (We can use arrow functions within methods though!)
 
 
 ## Object Properties

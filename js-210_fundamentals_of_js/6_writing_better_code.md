@@ -85,6 +85,8 @@ console.log(1234567);  // 1234567
 console.log(01234567); // 342391 (the same as octal 0o1234567)
 ```
 
+In strict mode, Octal numbers aren't allowed.
+
 ### Other Strict Mode Differences
 
 In addition to the changes described above, strict mode:
@@ -99,17 +101,59 @@ In addition to the changes described above, strict mode:
 
 ### When Should I Use Strict Mode?
 
-Use strict mode in any new code we write. If we're adding new functios to an old codebase, use function-level strict mode in the new functions. 
+Use strict mode in any new code we write. If we're adding new functions to an old codebase, use function-level strict mode in the new functions. 
 
 
 ## Syntactic Sugar
 
 Article: https://launchschool.com/gists/2edcf7d7
 
+Review this once in a while so I can recognize (and eventually use) the sweet sweet syntactical sugar!
+
 
 ## Errors
 
+The terms *exception* and *error* are synonymous. These are both *raised* and *thrown* (and these verbs are used synonymously). 
+
+`ReferenceError`: when we reference a variable/function that doesn't exist
+
+`TypeError`: occurs when we try to access a property on a value that doesn't have any properties. Calling something that isn't a function also raises this error.
+
+`SyntaxError`: something is wrong in the text of the program!
+
+
 ## Preventing Errors
+
+**Guard Clauses**
+
+A *guard clause* is code that guarantees data meets certain preconditions before it gets used. 
+
+We use guard clauses when a function can't trust its arguments are valid (i.e. incorrect types, structures, values, properties).
+
+**Detecting Edge Cases**
+
+Error prevention stems from examining the assumptions in our code. We need to think if the program can violate those assumptions -- these situations are called *edge cases* because they often involve values at the extreme end of possible values. 
+
+**Planning Your Code**
+
+Try to write out the common use cases for a new Function. This can help us find edge cases!
+
 
 ## Catching Errors
 
+We can **catch** errors with a `try/catch/finally` block:
+``` js
+try {
+  // Do something that might fail here and throw an Error.
+} catch (error) {
+  // This code only runs if something in the try clause throws an Error.
+  // "error" contains the Error object.
+} finally {
+  // This code always runs, no matter if the above code throws an Error or not.
+  // THE FINALLY CLAUSE IS OPTIONAL
+}
+```
+
+We use the `try/catch/finally` blocks when all of the following are true:
+- a built-in JS Function or method can throw an Error and you need to handle/prevent the Error
+- A simple guard clause is impossible/impractical to prevent the error

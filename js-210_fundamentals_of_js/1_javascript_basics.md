@@ -146,7 +146,7 @@ Examples:
 'hello'[1]; // "e"
 ```
 
-Note: Unlike Ruby (where bracket notation is a method), bracket notation in JS is an operator.
+Note: Unlike Ruby (where bracket notation is a method), bracket notation in JS is an *operator*.
 
 ### String Length
 

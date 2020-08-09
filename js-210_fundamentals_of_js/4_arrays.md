@@ -302,7 +302,7 @@ The array methods we have just learnt include:
 
 ## Arrays and Operators
 
-Operators form much of the syntax a rogrammer uses when writing programs. The JS operators we know so far include:
+Operators form much of the syntax a programmer uses when writing programs. The JS operators we know so far include:
 `+, -, *, /, %, +=, -=, ==, !=, ===, !==, >, >=, <, <=`
 
 *However, they're almost useless with Array objects.*

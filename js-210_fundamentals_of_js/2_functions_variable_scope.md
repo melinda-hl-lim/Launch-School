@@ -345,6 +345,3 @@ foo = 'hello';
 The lesson called "Practice Problems: Variable Scopes in JS (2)" has exercises that explore the different hoisting behaviours of `let` and `var`. 
 
 *Scope* describes how and where the language finds and retrieves values from declared variables.
-
-
-## Even more exercises
