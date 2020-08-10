@@ -68,7 +68,7 @@ The `break` statement exits from a loop immediately.
 
 The `continue` statement skips the current iteration of a loop and returns to the top of the loop.
 
-## Style
+## Functions
 
 ### Function Types and Uses
 
@@ -76,19 +76,48 @@ The `continue` statement skips the current iteration of a loop and returns to th
 - Use function declarations or function expressions for other functions, but choose one or the other as your primary choice.
 - If you use function expressions, named function expressions are better for debugging purposes. They also help clarify the intent of those functions.
 
+### Function definitions
+
+- Default parameter: The default value for parameter `greeting` is `'Hello'`.
+``` js
+function greet(greeting = 'Hello') {
+  console.log(greeting + ', world');
+}
+```
+
+
+## String Methods
+
+Template literal (a kind of string interpolation - yes, use one set of backticks in the code): ` `${greeting}, Puppi!` `
+
+- String.prototype.toUpperCase()
+- repeat
+- includes
+- trim: removes white spaces
+- slice
+- split
+- join
+- substring
+- substr
+
 
 ## Array Methods
 
-- push
+- Array.prototype.push(): add element to end of array // all methods follow the same naming convention afterwards!
 - pop
-- shift
-- unshift
+- shift: removes first element of array
+- unshift: adds element to beginning of array
 - indexOf
 - lastIndexOf
-- slice
-- splice: remove element from array?
+- slice: returns selected element(s) (not mutating)
+- splice: remove element(s) from array (mutating); return removed elemet(s)
 - concat
 - join
+- filter
+
+- Array.from(): 
+  - can take a string and split each char into an array element
+  - Can take an arrow function and create an array from results, where each result is an element
 
 
 ## Math Methods
@@ -102,6 +131,9 @@ The `continue` statement skips the current iteration of a loop and returns to th
 - `Math.ceil(number)`
 - `Math.random`: returns random float between `0` and `1`, excluding `1`.
 
+- Number.prototype.toFixed(): returns string representing number rounded to arg num of decimal places.
+
+
 ## Date Methods
 
 - `new Date()`: current date and time
@@ -111,6 +143,7 @@ The `continue` statement skips the current iteration of a loop and returns to th
 - `Date.getFullYear()`
   - DEPRECATED: `Date.getYear()`
 - `Date.getTime()`: milliseconds since Jan 1st, 1970
+
 
 ## Objects
 
@@ -135,5 +168,13 @@ for (var index = 0; index < nicknameKeys.length; index++) {
 // method 2
 for (var key in nicknames) {
   console.log(nicknames[key]);
+}
+```
+
+### Shallow Copy of an Object
+
+``` js
+function createShallowCopy(obj) {
+  return Object.assign({}, obj);
 }
 ```

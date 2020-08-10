@@ -16,6 +16,8 @@ The course focused on these specifics of the JavaScript launguage:
 
 **Parameters**: used when defining a function
 
+**Shallow Copy**: the new object has the same structure as the old object, but the values it holds are not cloned; both new and old objects reference the same values in memory
+
 
 ## Primitive Values, Types and Type Conversions
 
