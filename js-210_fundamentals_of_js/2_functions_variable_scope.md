@@ -92,6 +92,10 @@ The code within an inner scope can access any variables in the same scope or any
 
 ### Closures
 
+**Def'n Closure**. Closures are "the combination of a function and the lexical environment within which that function was [defined]." 
+
+We can think of closure as a function combined with all of the variables in its *lexical scope*, including function and class names.
+
 When we define a function, it retains access to (or closes over) the variable scope currently in effect. We call this *creating a closure*. 
 
 A closure retains references to everything that is in scope when the closure is created, and retains those references for as long as the closure exists. 
