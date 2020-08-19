@@ -1,0 +1,27 @@
+Biggest challenge:
+- Complete through PEDAC process
+  - downfall: test cases
+  - rushing through process
+
+Time start!
+
+3:00 First mention of algorithm. You didn't give in to the temptation though!
+
+3:20 Yay! You talked about test cases
+  - You are trying to think of edge cases! Couldn't think of any (neither can I)
+  - I terms of test cases, maybe check behaviour? LIke rolling over of time. 23:59:59 to 24
+
+6:00 Algorithm
+  - You think about the algorithm in very low levels: thinking about data types, initializing variables, ...
+  - Screenshot at 7:30
+  - After the screenshot, you say "I need to get more specific about how I will convert" I felt that you did need to figure out the math specifics, but you were already very specific about other aspects (see first bullet point)
+  - Spent about 5 minutes confirming math logic
+    - Note: no notion of *how* to string format. So in that sense, this part of the problem is still in the high level algorithm part 
+
+12:30 Coding time!
+
+  - Math confusion at 17:00. Not sure if it's a math-thing, or if it reflects a lack of precision/clear steps in your algorithm
+    - You went back to your algorithm at 20:00! That's good! IT also seemed to help you regain your train of thought
+    - After confirming and finding the math logic, you went to log the results of the algorithm. ~22:00
+
+24:30 Pass all test cases!
