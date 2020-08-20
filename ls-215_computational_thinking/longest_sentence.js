@@ -4,10 +4,17 @@ function longestSentence(text) {
     wordCount: 0,
     sentence: '',
   };
-  // Separate text into sentences
-  const sentences = text.match(/\w[^.?!]*?[.!?]/g);
 
-  // Find the longest sentence
+  const splitSentences = () => text.match(/\w[^.?!]*?[.!?]/g);
+
+  const displaySentenceStats = () => {
+    console.log(longest.sentence);
+    console.log('');
+    console.log(`The longest sentence has ${longest.wordCount} words.`);
+  };
+
+  const sentences = splitSentences();
+
   for (let index = 0; index < sentences.length; index += 1) {
     const currentSentence = sentences[index];
     const words = currentSentence.split(' ');
@@ -18,8 +25,5 @@ function longestSentence(text) {
     }
   }
 
-  // Display longest sentence stats
-  console.log(longest.sentence);
-  console.log('');
-  console.log(`The longest sentence has ${longest.wordCount} words.`);
+  displaySentenceStats();
 }

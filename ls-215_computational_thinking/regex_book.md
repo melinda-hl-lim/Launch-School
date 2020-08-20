@@ -129,4 +129,56 @@ For a lazy match: Add `?` after the main quantifier.
 
 ## Using Regex in Ruby and JS
 
+**Matching Strings**
+
+Method returns a value indicating if a match occured, and what substrings matched. The return value is truthy (`null` if no matches).
+
+``` js
+if (text.match(/^https?:\/\/\S+$/)) {
+  fetchUrl(text);
+}
+```
+
+**Splitting Strings**
+
+`Split` returns an Array that contains the values from each of the split fields. 
+
+``` js
+var record = "xyzzy\t3456\t334\tabc";
+var fields = record.split("\t");
+// -> ['xyzzy', '3456', '334', 'abc']
+```
+
 **Capture Groups**
+
+**Capture groups** are denoted with grouping parentheses `( )`. They capture the matching characters that correspond to part of a regex. We can reuse these matches later in the same regex and when constructing new values based on the matched string. 
+
+Example: match quoted strings inside some text, where either single or double quotes delimit the strings. 
+
+Without capture groups: `/['"].+?['"]/`
+
+With capture groups: `/(['"]).+?\1/`
+
+`\1` is a **backreference** reerring to the first capture group in the regex. If the first group matches a double quote, then `\1` matches a double quote, not a single quote.
+
+With multiple capture groups, they're numbered 1-9 from left to right and backreferenced with `\1` through `\9`.
+
+Capture groups are *most useful* in conjunction with methods that use regex to transform strings. 
+
+**Transformation**
+
+Transforming a string with regex involves matching the string against regex and using the results of the match to construct a new value.
+
+In JS, we use `replace`. Using the `g` option in the regex ensures the transformation applies to every match in the string.
+
+``` js
+var text = 'Four score and seven';
+var vowelless = text.replace(/[aeiou]/g, '*');
+// -> 'F**r sc*r *nd s*v*n'
+
+var text = 'We read "War of the Worlds".';
+console.log(text.replace(/(['"]).+\1/, '$1The Time Machine$1'));
+// outputs: We read "The Time Machine".
+```
+
+*Note* the use of `$1` as opposed to `\1`.

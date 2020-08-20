@@ -280,3 +280,212 @@ function cleanNumber(number) {
 ```
 
 
+## Problem 2
+
+The Luhn formula is a simple checksum formula used to validate a variety of identification numbers, such as credit card numbers, Canadian Social Insurance Numbers.
+
+The formula verifies a number against its included check digit, which is usually appended to a partial number to generate the full number. This number must pass the following test:
+- counting from the rightmost digit and moving left, double the value of every second digit
+- For any digit that thus become 10 or more, subtract 9 from the result
+- Add all these digits together
+
+If the total (the checksum) ends in 0, then the number is valid according to the Luhn Formula; otherwise, it's not valid. 
+
+Write a program that, given a number in string format, check if it is valid per the Luhn formula. This should treat, for example, "2323 2005 7766 3554" as valid. You can ignore all non-numeric characters in the input string.
+
+*Melinda work*
+
+Input: identification number (a string)
+Output: validation of number (boolean)
+
+Steps to verify number:
+1) Starting from the right side of the number, double every second digit
+  1.5) If the doubled digit > 10, then -9 from it
+2) Sum all digits together
+3) If sum of all digits ends in 0, it's a valid number!
+
+Additional Rules:
+- ignore all non-numeric characters in the argument 
+
+
+Examples:
+
+console.log(verifyLuhns('2323 2005 7766 3554')); // true
+console.log(verifyLuhns('1111')); // false
+
+console.log(verifyLuhns('1&h1k    1 1!')); // false - testing different char input
+console.log(verifyLuhns('\n8____7 6horses:3')); // true - testing different char input
+console.log(verifyLuhns('')); // empty string input?
+
+
+Data structure: array of digits
+  - iteration for doubling behaviour easier
+  - can use an accumulator to find the sum of all digits
+
+
+Algorithm:
+- Clean and prepare input for processing
+  - Remove any non-numeric characters from the argument. The result should be a string of digits.
+    - replace(/~regex to replace non-digits/ with "")
+  - Convert the string of digits into an array of digits. 
+    - split("")
+    - convert each digit from string to number
+
+- Process the inputted id number using Luhn's formula's steps
+  - Reverse the array of digits - this will help us iterate through the id number digits in reverse!
+
+  - Iterate through each digit of the reversed array:
+    - If the digit is in an [even number position]!!!, then double its value. 
+      - Note: even number position is actually odd if we count the digits' places from 0 instead of 1. So we want to double the value of every odd index in the array of digits.
+      - If, after doubling the digit, its value is more than 10, then subtract 9
+
+  - After the iteration and doubling of digits is complete, we want to sum all digits together. 
+    - reduce()
+
+- Validate the number 
+  - Check to see if the sum is a multiple of 10
+    - If so, it's a valid number!
+    - We want to return whether it's a valid number around here.
+
+``` js
+function verifyLuhns(idNumber){
+  let prepareId = idNumber => {
+    return idNumber.replace(/[^0-9]/g, '')
+                  .split('')
+                  .map(Number);
+  }
+  let processForLuhns = idNumber => {
+    let reversedId = idNumber.reverse();
+
+    return reversedId.map((digit, position) => {
+      if (position % 2 === 1) {
+        let newDigit = digit * 2;
+
+        if (newDigit >= 10) {
+          newDigit = newDigit - 9;
+        }
+        return newDigit;
+      } else {
+        return digit;
+      }
+    })
+  }
+
+  let idDigits = prepareId(idNumber);
+  let processedId = processForLuhns(idDigits);
+  let checkSum = processedId.reduce((sum, digit) => sum + digit);
+  return checkSum % 10 === 0;
+}
+```
+
+Notes:
+- I don't fully understand this sentence: "The formula verifies a number against its included check digit, which is usually appended to a partial number to generate the full number." I think it's okay in this case, since this partial number appended to the full number may not play a role in the verification process...?
+- I'm not sure how we want to handle inputs with no digits. This method assumes the input contains at least 1 digit. Otherwise we get errors about empty arrays. 
+
+
+
+## Problem 3
+
+A collection of spelling block has two letters per block as shown in this list:
+``` 
+B:O    X:K    D:Q    C:P    N:A    G:T
+R:E    F:S    J:W    H:U    V:I    L:Y
+Z:M
+```
+This limits the words you can spell with the blocks to only those words that do not use both letters from any given block. You can also only use each block once.
+
+Write a function that takes a word string as an argument and returns `true` if the word can be spelled using the set of block, `false` otherwise. You can consider the letters to be case-insensitive when you apply the rules.
+
+Given tests:
+``` js
+console.log(isBlockWord('BATCH'));      // true
+console.log(isBlockWord('BUTCH'));      // false
+console.log(isBlockWord('jest'));       // true
+console.log(isBlockWord('boOk'));       // false
+console.log(isBlockWord('BkDpNtRs'));   // true
+```
+
+*Melinda section*
+
+Input: a word (string)
+Output: if the word can be made with our blocks (boolean)
+
+Rules:
+- Use each block once
+- Use one letter from one block
+- Case doesn't matter
+
+Data structures:
+- storing letter blocks: object 
+  - {letterBlock: used?, ...}
+  - iterate through each block of letters (keys)
+  - can check if the block has been used (value)
+
+- word we're checking: string? array of string chars?
+  - iterate character by character
+
+Algorithm:
+
+- clean input for processing
+  - remove case 
+  - split into an array of characters
+  - "ButcH" --> "[b, u, t, c, h]"
+
+- iterate through each character in the given word
+  - for each character: 
+    - check if character is valid
+      - iterate through all letter blocks (keys of the object)
+        - check if each key includes the character
+          - if it does include the character, we check if its value is true
+            - if the value is true, then the letterblock has been used --> return false;
+            - if the value is false, letterBlock is just used now! set value to true.
+  
+  - if we reach the end of our iteration, we return true!
+
+
+``` js
+function isBlockWord(word) {
+  let letterBlocksTracker = {
+    bo: false,
+    xk: false,
+    dq: false,
+    cp: false,
+    na: false,
+    gt: false,
+    re: false,
+    fs: false,
+    jw: false,
+    hu: false,
+    vi: false,
+    ly: false,
+    zm: false,
+  } // key: values of format - letterBlock: used?
+  const letterBlocks = Object.keys(letterBlocksTracker);
+  let wordChars = word.toLowerCase().split('');
+
+  for (let wordIndex = 0; wordIndex < wordChars.length; wordIndex += 1) {
+    let currentChar = wordChars[wordIndex];
+
+    for (let blockIndex = 0; blockIndex < letterBlocks.length; blockIndex += 1) {
+      let currentBlock = letterBlocks[blockIndex];
+
+      if (currentBlock.includes(currentChar)) {
+        if (letterBlocksTracker[currentBlock]) {
+          // letter block has been used
+          return false;
+        } else {
+          letterBlocksTracker[currentBlock] = true;
+        };
+      };
+    };
+  };
+
+  return true;
+}
+```
+
+Notes: 
+- Handle empty string input? The function I made doesn't...
+- On iteration... a valid character means:
+  - isn't part of a block that has a used character
+    - if a block has a used character, the value should be `true`
