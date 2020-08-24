@@ -1,22 +1,11 @@
-function isDouble(number) {
-  const strNumber = String(number);
+function sumOfSums(numbers) {
+  const sums = [];
 
-  if (strNumber.length % 2 === 1) { return false; }
-
-  const digits = strNumber.split('');
-  const secondHalfStart = digits.length / 2;
-
-  for (let index = 0; index < secondHalfStart; index += 1) {
-    if (digits[index] !== digits[index + secondHalfStart]) {
-      return false;
-    }
+  for (let index = 1; index <= numbers.length; index += 1) {
+    const currentSequence = numbers.slice(0, index);
+    const currentSum = currentSequence.reduce((accum, number) => accum + number);
+    sums.push(currentSum);
   }
 
-  return true;
+  return sums.reduce((accum, sum) => accum + sum);
 }
-
-function twice(number) {
-  return isDouble(number) ? number : number * 2;
-}
-
-isDouble(3434);
