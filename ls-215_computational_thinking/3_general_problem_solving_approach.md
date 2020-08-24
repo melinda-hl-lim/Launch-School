@@ -489,3 +489,117 @@ Notes:
 - On iteration... a valid character means:
   - isn't part of a block that has a used character
     - if a block has a used character, the value should be `true`
+
+
+## Problem 4
+
+You are given a list of numbers in a "short-hand" range where only the the significant part of the next number is written because we know the numbers are always increasing (ex. "1, 3, 7, 2, 4, 1" represents `[1, 3, 7, 12, 14, 21]`).  Some people use different separators for their ranges (ex. "1-3, 1-2", "1:3, 1:2", "1..3, 1..2" represent the same numbers `[1, 2, 3, 11, 12]`). Range limits are always inclusive.
+
+Your job is to return a list of complete numbers.
+
+The possible separators are: `["-", ":", ".."]`.
+
+More examples:
+- "1, 3, 7, 2, 4, 1" --> 1, 3, 7, 12, 14, 21
+- "1-3, 1-2" --> 1, 2, 3, 11, 12
+- "1:5:2" --> 1, 2, 3, 4, 5, 6, ... 12
+- "104-2" --> 104, 105, ... 112
+- "104-02" --> 104, 105, ... 202
+- "545, 64:11" --> 545, 564, 565, .. 611
+- "545, 64:11, 13-9, 700, 1..3" --> 545, 564, 565, .. 611, 613 .. 619, 700, 701, 702, 703
+
+*Melinda work*
+
+Input: a string of numbers and separator characters
+Output: an array of numbers 
+
+Rules: 
+- numbers always increment in count
+- the sequence can begin with a full number
+  - we count up from this first number!
+- following the first number, ones place digit is specified
+  - sometimes the tens and ones place digit is specified...?
+- separator characters (-, :, ..) refer to ranges of numbers
+- separator character (,) used to listing numbers
+- range limit is inclusive (include that last number!)
+
+Data types: strings and numbers. Conversions. Think about this...
+- need to be in number form to += 1
+- need to be in string form to check end digits
+- need to be in string form to detect separator type
+
+
+Data structure: an array of strings
+
+- num, --> list num and move on
+- num- --> 
+- num: --> 
+- num.. --> list num and start counting up by one until we reach num2 where num2 ends with the digits following the separator
+
+
+Algorithm:
+- prepare input for processing
+  - convert the string of digits into an array of strings, separating at a space character
+
+- initialize output array -- call this finalNumbers
+
+- process each number shorthand in our array of strings
+  - split the current number shorthand by range separators 
+    - result: an array of string digits
+  - initialize variable to hold last digits we pushed - call this lastDigits
+  - for each string digits:
+    - loop!
+      - take lastDigits and add 1 - call currentDigits
+      - see if currentDigits (change to string form) holds the current string-digits in its end
+        - currentDigits.endsWith(string-digits)
+        - if so, then push current number to the array (push number!)
+        - if not, continue this looping of adding 1 and checking 
+
+- return array. should be array of numbers. 
+
+``` js
+function expandNumbers(shorthand) {
+  let shortDigits = shorthand.split(" ");
+  let finalNumbers = [];
+
+  shortDigits.forEach(shortDigit => {
+    let currentDigits = shortDigit.match(/\d+/g);
+    let lastNumber = finalNumbers[finalNumbers.length - 1] || 0;
+    let range = !(currentDigits.length === 1);
+
+    currentDigits.forEach(currentDigit => {
+      while (true) {
+        lastNumber += 1;
+
+        if (range) {
+          finalNumbers.push(lastNumber);
+        } else {
+          if (String(lastNumber).endsWith(currentDigit)) {
+            finalNumbers.push(lastNumber);
+          } 
+        }
+
+        if (String(lastNumber).endsWith(currentDigit)) {
+          break;
+        }
+      }
+    })
+  })
+
+  return finalNumbers;
+}
+```
+
+Assumptions:
+- input never empty string
+- only positive numbers
+
+
+
+## Problem 5
+
+Implement encoding and decoding for the rail fence cipher. 
+
+The rail fence cipher is a form of transposition cipher that gets its name from the way in which its encoded. 
+
+In the Rail Fence cipher, the message is written downwards on successive "rails" of an imaginary fence, then moving up when we get to the bottom (like a zig zag). Finally the message is read off in rows. 
