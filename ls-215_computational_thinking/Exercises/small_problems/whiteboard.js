@@ -1,11 +1,18 @@
-function sumOfSums(numbers) {
-  const sums = [];
+function transactionsFor(itemId, transactions) {
+  return transactions.filter((transaction) => transaction.id === itemId);
+}
 
-  for (let index = 1; index <= numbers.length; index += 1) {
-    const currentSequence = numbers.slice(0, index);
-    const currentSum = currentSequence.reduce((accum, number) => accum + number);
-    sums.push(currentSum);
-  }
+function isItemAvailable(itemId, transactions) {
+  const itemTransactions = transactionsFor(itemId, transactions);
+  let numAvailable = 0;
 
-  return sums.reduce((accum, sum) => accum + sum);
+  itemTransactions.forEach((record) => {
+    if (record.movement === 'in') {
+      numAvailable += record.quantity;
+    } else {
+      numAvailable -= record.quantity;
+    }
+  });
+
+  return numAvailable > 0;
 }

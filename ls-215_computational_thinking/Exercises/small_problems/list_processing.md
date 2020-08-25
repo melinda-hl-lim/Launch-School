@@ -166,13 +166,315 @@ If the LS solution doesn't make much sense, go look at their explanation!
 
 ## 5. Leading Substrings
 
+Write a function that takes a string argument, and returns a list of all substrings that start from the beginning of the string, ordered from shortest to longest.
+
+Examples:
+``` js
+leadingSubstrings('abc');      // ["a", "ab", "abc"]
+leadingSubstrings('a');        // ["a"]
+leadingSubstrings('xyzzy');    // ["x", "xy", "xyz", "xyzz", "xyzzy"]
+```
+
+Input: a string
+Output: Every sequential substring that starts with the first character of the string
+
+Algorithm: 
+- Prepare the string for processing
+  - Split the string into an array of characters
+    - ['c', 'a', 't']
+
+- Find all sequential substrings starting with first char
+  - Change each element of the array of characters such that the element is the an array of characters, first char of the string up through the current
+  - Then for each subarray, combine all elements into a string and un-array-ify
+    - ['c', 'ca', 'cat']
+    - arr.mapWIdx( arr.slice(0, idx).join('') ) 
+      - (map returns new array)
+  
+  - at this point, we should have an array of the correct substrings
+
+- return array of substrings 
+
+``` js
+function leadingSubstrings(string) {
+  const chars = string.split('');
+
+  const subStrings = chars.map((char, idx) => chars.slice(0, idx + 1).join(''));
+
+  return subStrings;
+}
+```
+
+Launch School Solution:
+``` js
+function leadingSubstrings(string) {
+  let substrings = [];
+  for (let length = 1; length <= string.length; length += 1) {
+    substrings.push(string.slice(0, length));
+  }
+
+  return substrings;
+}
+```
+
 ## 6. All Substrings
+
+Write a function that returns a list of all substrings of a string. Order the returned list by where in the string the substring begins. This means that all substrings that start at position 0 should come first, then all substrings that start at position 1, and so on. Since multiple substrings will occur at each position, return the substrings at a given position from shortest to longest.
+
+You may (and should) use the `leadingSubstrings` function you wrote in the previous exercise.
+
+Example:
+``` js
+substrings('abcde');
+
+// returns
+[ "a", "ab", "abc", "abcd", "abcde",
+  "b", "bc", "bcd", "bcde",
+  "c", "cd", "cde",
+  "d", "de",
+  "e" ]
+```
+
+*Melinda work*
+
+``` js
+function substrings(string) {
+  let allSubstrings = [];
+
+  for (let index = 0; index < string.length; index += 1) {
+    const currentSlice = string.slice(index);
+    allSubstrings = allSubstrings.concat(leadingSubstrings(currentSlice));
+  }
+
+  return allSubstrings;
+}
+```
 
 ## 7. Palindromic Substrings
 
+Write a function that returns a list of all substrings of a string that are palindromic. That is, each substring must consist of the same sequence of characters forwards as backwards. The substrings in the returned list should be sorted by their order of appearance in the input string. Duplicate substrings should be included multiple times.
+
+You may (and should) use the `substrings` function you wrote in the previous exercise.
+
+For the purpose of this exercise, you should consider all characters and pay attention to case; that is, `'AbcbA'` is a palindrome, but `'Abcba'` and `'Abc-bA'` are not. In addition, assume that single characters are not palindromes.
+
+Examples:
+``` js
+palindromes('abcd');       // []
+palindromes('madam');      // [ "madam", "ada" ]
+```
+
+*Melinda work*
+
+Input: a string
+Output: an array of palindromic substrings
+
+Rules: 
+- all characters count (including non-alphanumeric)
+- palindromes are case-sensitive
+
+Substrings returns all sequential substrings
+
+Algorithm:
+- isPalindrome?
+  - input: string
+  - output: boolean
+
+  - split the string into two halves
+    - if it's odd, then the most-center character is left out
+    - Math.floor(string.length) --> index of the last character in the first half
+    - first half: string.slice(0, ^)
+    - second half: string.slice(-^)
+  - reverse the characters in the second half of the string
+    - split reverse join
+  - see if first half === second half
+    - if true, return true
+    - else return false
+    - ^ don't actually write if...else...
+
+- main palindrome finder function
+  - initialize array to accumulate palindromes
+  - create an array of all seq substrings using substrings function
+  - iterate through each of the substrings
+    - see if it is a palindrom
+      - if so, add to accumulator array
+  - return array of palindromes
+
+``` js
+function isPalindrome(string) {
+  if (string.length === 1) { return false; }
+
+  const chars = string.split('');
+  const halfLength = Math.floor(string.length);
+  const firstHalf = string.slice(0, halfLength);
+  const secondHalf = string.slice(-1 * halfLength)
+    .split('')
+    .reverse()
+    .join('');
+
+  return firstHalf === secondHalf;
+}
+
+function palindromes(string) {
+  const palindromicSubstrings = [];
+  const allSubstrings = substrings(string);
+
+  allSubstrings.forEach((substring) => {
+    if (isPalindrome(substring)) {
+      palindromicSubstrings.push(substring);
+    }
+  });
+
+  return palindromicSubstrings;
+}
+```
+
+Launch School Solution:
+``` js
+function isPalindrome(word) {
+  return word.length > 1 && word === word.split('').reverse().join('');
+}
+
+function palindromes(string) {
+  return substrings(string).filter(isPalindrome);
+}
+```
+
 ## 8. Grocery List
+
+Write a function that takes a grocery list (a 2D array) with each element containing a fruit and a quantity, and returns a one-dimensional array of fruits in which each fruit appears a number of times equal to its quantity.
+
+Example:
+``` js
+buyFruit([['apple', 3], ['orange', 1], ['banana', 2]]);
+// returns ["apple", "apple", "apple", "orange", "banana", "banana"]
+```
+
+*Melinda work*
+
+Input: a 2D array where every subelement is fruit-quantity
+Output: a 1D array where every subelement is fruit
+
+``` js
+function buyFruit(list) {
+  const newList = list.flatMap((item) => {
+    const fruit = item[0];
+    const quantity = item[1];
+    let counter = 0;
+    const newItem = [];
+
+    do {
+      newItem.push(fruit);
+      counter += 1;
+    } while (counter < quantity);
+
+    return newItem;
+  });
+
+  return newList;
+}
+```
+
+Note to self: I wanted to try using `flatMap` and a `do...while...` loop. 
+
 
 ## 9. Inventory Item Transactions
 
+Write a function that takes two arguments, `inventoryItem` and `transactions`, and returns an array containing only the transactions for the specified `inventoryItem`. 
+
+Examples:
+``` js
+const transactions = [ { id: 101, movement: 'in',  quantity:  5 },
+                       { id: 105, movement: 'in',  quantity: 10 },
+                       { id: 102, movement: 'out', quantity: 17 },
+                       { id: 101, movement: 'in',  quantity: 12 },
+                       { id: 103, movement: 'out', quantity: 15 },
+                       { id: 102, movement: 'out', quantity: 15 },
+                       { id: 105, movement: 'in',  quantity: 25 },
+                       { id: 101, movement: 'out', quantity: 18 },
+                       { id: 102, movement: 'in',  quantity: 22 },
+                       { id: 103, movement: 'out', quantity: 15 }, ];
+
+console.log(transactionsFor(101, transactions));
+// returns
+// [ { id: 101, movement: "in",  quantity:  5 },
+//   { id: 101, movement: "in",  quantity: 12 },
+//   { id: 101, movement: "out", quantity: 18 }, ]
+```
+
+*Melinda work*
+
+Input: 
+  - an item id (number)
+  - an array of transactions 
+    - transaction (object with keys id, movement, quantity)
+Return:
+  - an array of transactions for inputted item with matching id
+    - array of transaction objects
+
+Algorithm:
+  <!-- - Setup
+    - Initialize accumulator array -->
+  
+  - Iterate through transactions 
+    - Check if transaction contains matching item ID 
+      - If so, push transaction object to accumulator 
+    - Filter??? returns new array? so no accumulator required
+  <!-- - Return accumulator -->
+
+``` js
+function transactionsFor(itemId, transactions) {
+  return transactions.filter((transaction) => transaction.id === itemId);
+}
+```
+
 ## 10. Inventory Item Availability
 
+Building on the previous exercise, write a function that returns `true` or `false` based on whether or not an inventory `item` is available. As before, the function takes two arguments: an inventory `item` and a list of `transactions`. The function should return `true` only if the sum of the `quantity` values of the `item`'s transactions is greater than zero. Notice that there is a `movement` property in each transaction object. A `movement` value of `'out'` will decrease the `item`'s `quantity`. 
+
+You may (and should) use the `transactionFor` function from the previous exercise.
+
+*Melinda work*
+
+Input: an item id (number) and transactions (array of objects)
+Output: true or false
+
+Algorithm:
+- retrieve all transactions of desired item using `transactionFor`
+- for each transaction of desired item
+  - if the movement is in
+    - add quantity to accumulator
+  - else movement is out
+    - subtract quantity from accumulator
+- return if accumulator is > 0
+
+``` js
+function isItemAvailable(itemId, transactions) {
+  const itemTransactions = transactionsFor(itemId, transactions);
+  let numAvailable = 0;
+
+  itemTransactions.forEach((record) => {
+    if (record.movement === 'in') {
+      numAvailable += record.quantity;
+    } else {
+      numAvailable -= record.quantity;
+    }
+  });
+
+  return numAvailable > 0;
+}
+```
+
+Launch School solution with reduce:
+``` js
+function isItemAvailable(item, transactions) {
+  const quantity = transactionsFor(item, transactions).reduce((sum, transaction) => {
+    if (transaction.movement === 'in') {
+      return sum + transaction.quantity;
+    } else {
+      return sum - transaction.quantity;
+    }
+  }, 0);
+
+  return quantity > 0;
+}
+```
