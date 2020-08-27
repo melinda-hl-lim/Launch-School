@@ -493,7 +493,9 @@ Notes:
 
 ## Problem 4
 
-You are given a list of numbers in a "short-hand" range where only the the significant part of the next number is written because we know the numbers are always increasing (ex. "1, 3, 7, 2, 4, 1" represents `[1, 3, 7, 12, 14, 21]`).  Some people use different separators for their ranges (ex. "1-3, 1-2", "1:3, 1:2", "1..3, 1..2" represent the same numbers `[1, 2, 3, 11, 12]`). Range limits are always inclusive.
+You are given a list of numbers in a "short-hand" range where only the the significant part of the next number is written because we know the numbers are always increasing (ex. "1, 3, 7, 2, 4, 1" represents `[1, 3, 7, 12, 14, 21]`).  
+
+Some people use different separators for their ranges (ex. "1-3, 1-2", "1:3, 1:2", "1..3, 1..2" represent the same numbers `[1, 2, 3, 11, 12]`). Range limits are always inclusive.
 
 Your job is to return a list of complete numbers.
 
@@ -517,74 +519,60 @@ Rules:
 - numbers always increment in count
 - the sequence can begin with a full number
   - we count up from this first number!
-- following the first number, ones place digit is specified
-  - sometimes the tens and ones place digit is specified...?
+- following the first number, ending digits only are specified 
 - separator characters (-, :, ..) refer to ranges of numbers
 - separator character (,) used to listing numbers
 - range limit is inclusive (include that last number!)
 
-Data types: strings and numbers. Conversions. Think about this...
-- need to be in number form to += 1
-- need to be in string form to check end digits
-- need to be in string form to detect separator type
+Algorithm
+- Initialize final numbers accum array
+- Convert input string into an array of string-digits and range characters
+  - '1-3, 5..7, 9:3' -> ['1-3', '5..7', '9:3']
+  - string.split(',')
 
+- For each string-digits in the array
 
-Data structure: an array of strings
+  - Each string-digit respresents either a single number or a range with two numbers for start and end
 
-- num, --> list num and move on
-- num- --> 
-- num: --> 
-- num.. --> list num and start counting up by one until we reach num2 where num2 ends with the digits following the separator
+  - Create an array of digits with no separators
+    - '1-3' -> ['1', '3']
 
+  - If there's only one digit in the array, then it's only a number. 
+    - Retrieve the last number from our accum array || 0
+    - Add 1 to that number until the last digits match the string-digit in our array
+      - Note: we will have to convert the number into a string each time to compare the last digits
+    - Once we reach the number with matching last digits, push the number to the accum array
+  
+  - If there's more than one digit in the array, then we need to push a range
+    - Find the first digit of the range with the exact same steps as the above subsection. 
 
-Algorithm:
-- prepare input for processing
-  - convert the string of digits into an array of strings, separating at a space character
-
-- initialize output array -- call this finalNumbers
-
-- process each number shorthand in our array of strings
-  - split the current number shorthand by range separators 
-    - result: an array of string digits
-  - initialize variable to hold last digits we pushed - call this lastDigits
-  - for each string digits:
-    - loop!
-      - take lastDigits and add 1 - call currentDigits
-      - see if currentDigits (change to string form) holds the current string-digits in its end
-        - currentDigits.endsWith(string-digits)
-        - if so, then push current number to the array (push number!)
-        - if not, continue this looping of adding 1 and checking 
-
-- return array. should be array of numbers. 
 
 ``` js
 function expandNumbers(shorthand) {
-  let shortDigits = shorthand.split(" ");
-  let finalNumbers = [];
+  const shortDigits = shorthand.split(' ');
+  const finalNumbers = [];
 
-  shortDigits.forEach(shortDigit => {
-    let currentDigits = shortDigit.match(/\d+/g);
+  shortDigits.forEach((shortDigit) => {
+    const currentDigits = shortDigit.match(/\d+/g);
     let lastNumber = finalNumbers[finalNumbers.length - 1] || 0;
-    let range = !(currentDigits.length === 1);
+    const range = !(currentDigits.length === 1);
 
-    currentDigits.forEach(currentDigit => {
+    currentDigits.forEach((currentDigit) => {
       while (true) {
         lastNumber += 1;
 
         if (range) {
           finalNumbers.push(lastNumber);
-        } else {
-          if (String(lastNumber).endsWith(currentDigit)) {
-            finalNumbers.push(lastNumber);
-          } 
+        } else if (String(lastNumber).endsWith(currentDigit)) {
+          finalNumbers.push(lastNumber);
         }
 
         if (String(lastNumber).endsWith(currentDigit)) {
           break;
         }
       }
-    })
-  })
+    });
+  });
 
   return finalNumbers;
 }
