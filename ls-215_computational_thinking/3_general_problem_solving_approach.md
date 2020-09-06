@@ -538,44 +538,115 @@ Algorithm
     - '1-3' -> ['1', '3']
 
   - If there's only one digit in the array, then it's only a number. 
-    - Retrieve the last number from our accum array || 0
-    - Add 1 to that number until the last digits match the string-digit in our array
-      - Note: we will have to convert the number into a string each time to compare the last digits
-    - Once we reach the number with matching last digits, push the number to the accum array
+    - addStringDigit()
   
-  - If there's more than one digit in the array, then we need to push a range
-    - Find the first digit of the range with the exact same steps as the above subsection. 
+  - If there's more than one digit in the array, then we need to push a range. Iterate through the array of digits with no separators in pairs:
+    - addRangeOfStringDigit(start, end, numbers)
+      - start is the first string digit in the array
+      - end is the second string digit in the array
+    - How do we deal with a three-digit range?
+      - for loop 
+        - start = index
+        - end = index + 1
+        - index loops to length - 2?
+
+- Return accum array of numbers 
+
+
+- addStringDigit() pseudocode
+  - Retrieve the last number from our accum array || 0
+  - Add 1 to that number until the last digits match the string-digit in our array
+    - Note: we will have to convert the number into a string each time to compare the last digits
+  - Once we reach the number with matching last digits, push the number to the accum array
 
 
 ``` js
+function addStringDigit(stringDigit, numbers) {
+  let previousNumber = numbers.slice(-1)[0] || 0;
+
+  while (true) {
+    previousNumber += 1;
+    const comparisonSlice = stringDigit.length * -1;
+    const newStringDigit = String(previousNumber);
+
+    if (newStringDigit.slice(comparisonSlice) === stringDigit) {
+      numbers.push(previousNumber);
+      break;
+    }
+  }
+
+  return numbers;
+}
+
+function createRangeStringDigits(start, end) {
+  const stringDigits = [start];
+
+  while (true) {
+    const previousDigits = stringDigits.slice(-1)[0];
+    const comparisonSlice = end.length * -1;
+    if (previousDigits.slice(comparisonSlice) === end) { break; }
+
+    const nextDigits = String(Number(previousDigits) + 1);
+    stringDigits.push(nextDigits);
+  }
+
+  return stringDigits;
+}
+
+function addRangeOfStringDigits(start, end, numbers) {
+  const stringDigits = createRangeStringDigits(start, end);
+
+  for (let index = 0; index < stringDigits.length; index += 1) {
+    numbers = addStringDigit(stringDigits[index], numbers);
+  }
+
+  return numbers;
+}
+
 function expandNumbers(shorthand) {
-  const shortDigits = shorthand.split(' ');
-  const finalNumbers = [];
+  let finalNumbers = [];
+  const allStringDigits = shorthand.split(', ');
 
-  shortDigits.forEach((shortDigit) => {
-    const currentDigits = shortDigit.match(/\d+/g);
-    let lastNumber = finalNumbers[finalNumbers.length - 1] || 0;
-    const range = !(currentDigits.length === 1);
+  allStringDigits.forEach((stringDigitSet) => {
+    const digits = stringDigitSet.match(/[0-9]+/g);
 
-    currentDigits.forEach((currentDigit) => {
-      while (true) {
-        lastNumber += 1;
-
-        if (range) {
-          finalNumbers.push(lastNumber);
-        } else if (String(lastNumber).endsWith(currentDigit)) {
-          finalNumbers.push(lastNumber);
-        }
-
-        if (String(lastNumber).endsWith(currentDigit)) {
-          break;
-        }
+    if (digits.length === 1) {
+      finalNumbers = addStringDigit(digits[0], finalNumbers);
+    } else {
+      for (let index = 0; index < (digits.length - 1); index += 1) {
+        const startRange = digits[index];
+        const endRange = digits[index + 1];
+        finalNumbers = addRangeOfStringDigits(startRange, endRange, finalNumbers);
       }
-    });
+    }
   });
 
   return finalNumbers;
 }
+
+/*
+() => {
+  let digits = createMultiArray
+  digits = increaseNumbers(digits)
+  return generateRange()
+}
+
+*/
+
+expandNumbers('1, 3, 7, 2, 4, 1'); // 1, 3, 7, 12, 14, 21
+// ['1, 3, 7, 2, 4, 1']
+
+expandNumbers('1-3, 1-2'); // 1, 2, 3, 11, 12
+// [[1, 3], [1, 2]]
+expandNumbers('104-2'); // 104, 105, ... 112
+expandNumbers('104-02'); // 104, 105, ... 202
+
+expandNumbers('1:5:2'); // 1, 2, 3, 4, 5, 6, ... 12
+// [[1, 5], [5, 2]]
+expandNumbers('545, 64:11'); // 545, 564, 565, .. 611
+expandNumbers('545, 64:11, 13-9, 700, 1..3'); // 545, 564, 565, .. 611, 613 .. 619, 700, 701, 702, 703
+// [545, [564, 611], [13,9], 700, [1,3]]
+
 ```
 
 Assumptions:
