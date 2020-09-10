@@ -163,7 +163,7 @@ The `Object.prototype` object is at the end of the prototype chain for all JS ob
 
 ## Prototypal Inheritance and Behaviour Delegation
 
-**Prototype Chain Lookup for Property Access**
+### Prototype Chain Lookup for Property Access
 
 When we try to access a property or method, JS searches not only the object itself, but also all objects on its prototype chain until it reaches the end.
 
@@ -181,7 +181,7 @@ bar.hello();          // returns hello world
 
 In this case, the `hello` method is found on the `bar` object's prototype object (`foo`), then called with the context of the `bar` object itself.
 
-**Protoypal Inheritance and Behaviour Delegation**
+### Protoypal Inheritance and Behaviour Delegation
 
 JS's prototype chain lookup for properties gives us the ability to store an object's data and behaviours not just in the object itself, but anywhere on its prototype chain. This is very powerful when we want to share data or behaviours:
 
@@ -216,7 +216,7 @@ This patterns is sometimes called **Prototypal Inheritance**, and sometimes call
 - from a top-down / design time POV, objects on the bottom of the prototype chain "inherited" properties and behaviours of all the upstream objects
 - from a bottom-up / run time POV, objects on the bottom of the prototype chain can "delegate" requests to the upstream objects to be handled. 
 
-**Overriding Default Behaviour**
+### Overriding Default Behaviour
 
 Objects created from prototypes can override shared behaviours by defining the same methods locally:
 
@@ -239,7 +239,7 @@ spot.name = 'Spot';
 spot.say();             // => Spot says Woof!
 ```
 
-**Object.getOwnPropertyNames and object.hasOwnProperty**
+### Object.getOwnPropertyNames and object.hasOwnProperty
 
 With behaviour delegation, `obj.prop !== undefined` is no longer a reliable test to see if a property is defined on an object. If `prop` is defined anywhere in the object's prototype chain, then the expression returns true.
 
@@ -247,7 +247,7 @@ Instead, we can use these methods to check an object's own property:
 - `hasOwnProperty` method tests if a property is defined on the object
 - `Object.getOwnPropertyNames` returns an array of an object's own property names.
 
-**Methods on Object.prototype**
+### Methods on Object.prototype
 
 Some useful methods:
 - `Object.prototype.toString()`: returns string representation of the object
@@ -650,7 +650,7 @@ An introduction to modules in this gist: https://launchschool.com/gists/e7d0531f
 **Constructor functions**
 - Are meant to be invoked with the `new` operator
 - Instantiate a new object behind the scenes and allow the developer to manipulate it using the `this` keyword
-- A typical constructur is used with the following pattern:
+- A typical constructor is used with the following pattern:
   - Constructor is invoked with `new`
   - A new object is created by the JS runtime
   - The new object inherits from the constructor's prototype
@@ -661,24 +661,25 @@ An introduction to modules in this gist: https://launchschool.com/gists/e7d0531f
 **The `[[Prototype]]` property**
 - Every object has a `[[Prototype]]` property that points to a special object, the object's prototype
 - The object's prototype is used to lookup properties that don't exist on the object itself
-- Usefule methods:
+- Useful methods:
   - `Object.create` returns a new object with the argument object as its prototype
   - `Object.getPrototypeOf` can be used to retrieve the prototype object for an object
   - `Object.setPrototypeOf` can be used to replace an object's prototype object with another object
   - `obj.isPrototypeOf` can be used to check for prototype relationships between objects
 
-*Following has not been melinda reviewed*
+**The Prototype Chain Property**
+- The prototype chain property lookup is the basis for "prototypal inheritance", or property sharing through the prototype chain. 
+- Downstream objects "inherit" properties and behaviors from upstream objects, or, put differently, downstream objects can "delegate" properties or behaviors upstream.
+  - A downstream object shadows an inherited property if it has a same-named property on itself.
+  - `Object.getOwnPropertyNames` and `obj.hasOwnProperty` can be used to test whether a given property is owned by an object.
 
- The prototype chain property lookup is the basis for "prototypal inheritance", or property sharing through the prototype chain. Downstream objects "inherit" properties and behaviors from upstream objects, or, put differently, downstream objects can "delegate" properties or behaviors upstream.
+- Every function has a `prototype` property that points to an object with a `constructor` property, that points back to the function itself. 
+- If the function is used as a constructor, then the returned object's `[[Prototype]]` will be set to the constructor's `prototype` property. This behavior allows us to set properties on the constructor's prototype object that will be shared by all objects returned by it. This is called the *"Prototype Pattern"* of object creation.
 
-    A downstream object shadows an inherited property if it has a same-named property on itself.
-    Object.getOwnPropertyNames and obj.hasOwnProperty can be used to test whether a given property is owned by an object.
+- The **Pseudo Classical Pattern** of object creation generates objects using a constructor function that defines state, and then defines shared behaviors on the constructor's `prototype`.
 
-Every function has a prototype property that points to an object with a constructor property, that points back to the function itself. If the function is used as a constructor, then the returned object's [[Prototype]] will be set to the constructor's prototype property. This behavior allows us to set properties on the constructor's prototype object that will be shared by all objects returned by it. This is called the "Prototype Pattern" of object creation.
-The Pseudo Classical Pattern of object creation generates objects using a constructor function that defines state, and then defines shared behaviors on the constructor's prototype.
-The Objects Linking to Other Objects (OLOO) pattern of object creation uses a prototype object and Object.create to generate objects with shared behavior.
-
-    An optional init method on the prototype object is defined to set unique states on the returned objects.
+- The **Objects Linking to Other Objects (OLOO)** pattern of object creation uses a prototype object and `Object.create` to generate objects with shared behavior.
+  - An optional `init` method on the prototype object is defined to set unique states on the returned objects.
 
 
 **Learnt from the quiz**

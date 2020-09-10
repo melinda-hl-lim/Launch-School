@@ -138,7 +138,7 @@ In addition to the changes described above, strict mode:
 - disables access to some properties of the `arguments` object in functions
 - disables the `with` statement, a statement whose use is not recommended even in sloppy mode
 
-## Summary
+### Summary
 
 The most important changes strict mode makes are:
 - you can't create global variables implicitly
@@ -146,7 +146,26 @@ The most important changes strict mode makes are:
 - forgetting to use `this` in a method raises an error
 - leading zeros on numeric integers are illegal 
 
+## Syntactic Sugar
+
+https://launchschool.com/gists/2edcf7d7
 
 ## `let` and `const`
 
+https://launchschool.com/gists/8d57ccb1
+
 ## Arrow Functions
+
+https://launchschool.com/gists/0c48e9dc
+
+## Classes
+
+https://launchschool.com/gists/6ba85481
+
+## Inheritance with Classes
+
+https://launchschool.com/gists/cdba6a8e
+
+## Modules
+
+https://launchschool.com/gists/e7d0531f

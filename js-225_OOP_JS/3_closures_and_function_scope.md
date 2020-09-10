@@ -456,7 +456,7 @@ let inventory = (function() {
 
 - Closures let a function access any variable that was in scope when the function was defined
 
-- Values that are no longer accessible from anywhere in teh code are eligible for **garbage collection**, which frees up the emory that they used for resuse by other parts of the program
+- Values that are no longer accessible from anywhere in the code are eligible for **garbage collection**, which frees up the memory that they used for resuse by other parts of the program
 
 - You can use closures to make variables "private" to a function, or set of functions, and inaccessible elsewhere
 
