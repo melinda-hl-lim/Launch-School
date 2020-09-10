@@ -2,7 +2,7 @@
 
 All functions obey the same lexical scoping rules:
 - they can access any variable defined within it
-- they ca access any variables that were in scope based on the context where the function was *defined*
+- they can access any variables that were in scope based on the context where the function was *defined*
 
 Linked review: https://launchschool.com/lessons/7cd4abf4/assignments/0b1349b7
 
@@ -20,7 +20,7 @@ Optional Closures reading: https://medium.com/dailyjs/i-never-understood-javascr
 
 The two concepts are distinct, but closely related.
 
-In JS, functions are first-class functions so we can think of them as values; objects. 
+In JS, functions are first-class functions so we can think of them as values, objects. 
 
 **Examples of Higher-order Functions**
 
@@ -333,7 +333,7 @@ The closure allows the applicator functions (`add1` and `add9`) to use the value
 In effect, closures let us define private data that persists for the function's lifetime. This technique is useful when we need to *package both data and functionality together* - we can pass around functions and not lose the private data. 
 
 
-Side note: closures and objects both provide the means to organize code into data and a chunk of behaviour that relies on the data. 
+*Important side note*: closures and objects both provide the means to organize code into data and a chunk of behaviour that relies on the data. 
 
 
 ## Immediately Invoked Function Expressions
@@ -346,7 +346,7 @@ An **immediately invoked function expression (IIFE)** is a function that we defi
 })(2);  // 3
 ```
 
-Note the extra `()` around the function expression - these parentheses are a grouping operator that controls the evaluation in expressions.
+Note the extra `()` around the function expression - these parentheses are a *grouping operator* that controls the evaluation in expressions.
 
 With IIFEs, we use the parentehses to make it explicit that we want to parse the function definition into an expression. As an expression, it means there is a value returned -- the function -- which we can immediately invoke.
 
@@ -361,9 +361,9 @@ function() {
 
 We can move the arguments list inside the outer set of parentheses:
 ``` js
-(function() {
-  console.log('hello');
-}());
+(function(a) {
+  return a + 1;
+})(2);   // 3
 ```
 
 We can omit the parentehses around an IIFE when the function definition is an expression that doesn't occur at the beginning of a line:

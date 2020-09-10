@@ -1,6 +1,6 @@
 ## Introduction
 
-*Why do function execution context rules exist?*
+**Why do function execution context rules exist?**
 
 JavaScript has **first-class functions**, meaning the developer can:
 - add them to objects, 
@@ -19,6 +19,8 @@ In the case of first-class functions, we need a way (as developers) to control t
 ## Prerequisites
 
 Understanding JS strict mode: https://launchschool.com/gists/406ba491
+
+See gists.md for notes.
 
 
 ## The Global Object
@@ -88,8 +90,11 @@ In strict mode, we don't have access to the global object as the implicit contex
 - In node, the global object is the `global` object.
 
 - In node, there's also an additional "module" scope. 
+  - variables in the module scope are those declared at the top level of a node.js file
+    - thus, these variables are not added to the global object
+  - module-scoped variables are only accessible from within the file
 
-**NOTE TODO** Probably worth revisiting this note about Node in the lesson... 
+Still fuzzy on the node sidenote...
 
 
 ## Implicit and Explicit Function Execution Contexts
@@ -262,6 +267,39 @@ Worthy of reviewing if confused about:
 - use of `call`, `apply`, or `bind`
 - want examples of assigning functions to variables or objects
 
+## Dealing with Context Loss Summary
+
+Three ways a function can lose its context:
+1. Method losing context when it's taken out of an object
+2. Internal function losing method context
+3. Function as argument losing surrounding context
+
+Ways to fix context loss:
+
+Loss 1:
+- add an extra parameter to the function in which our function/method was passed
+  - this extra parameter accepts an object and sets the execution context to the object
+
+- create a hard binding to the function with `bind`
+
+Loss 2: 
+- preserve context with a local variable in the lexical scope (`let self = this;`)
+
+- pass context to internatl functions with `call` and `apply`
+
+- bind the context with a function expression
+  - use `bind` when we define the function to provide a permanent context to the function
+
+Loss 3: 
+- preserve context with a local variable in the lexical scope
+
+- bind the argument function with the surrounding context (use `.bind(this)` at the end of the function expression)
+
+- use an optional `thisArg` argument
+  - Array methods `map`, `every`, `some`, and `forEach` take a `thisArg` argument
+
+- use arrow functions for the callback
+
 
 ## Dealing with Context Loss (1) 
 
@@ -271,7 +309,7 @@ Goals of next 3 lessons:
 
 **Method Losing Context When Taken Out of Object**
 
-If you remove a method fromits containing object and execute it, it loses its context.
+If you remove a method from its containing object and execute it, it loses its context.
 
 A straight forward example of context loss:
 ``` js
@@ -506,7 +544,7 @@ let obj = {
 };
 ```
 
-2. Bind the argument function with the surronuding context
+2. Bind the argument function with the surrounding context
 ``` js
 let obj = {
   a: 'hello',
@@ -553,6 +591,9 @@ let obj = {
 
 
 ## Summary
+
+*Summary reading*: https://web.archive.org/web/20180209163541/https://dmitripavlutin.com/gentle-explanation-of-this-in-javascript/
+
 
 - Function invocations (e.g., `parseInt(numberString)`) rely upon implicit execution context that resolves to the global object. 
 - Method invocations (e.g., `array.forEach(processElement)`) rely upon implicit context that resolves to the object that holds the method.
