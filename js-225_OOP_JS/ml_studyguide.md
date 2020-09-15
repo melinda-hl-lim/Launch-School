@@ -349,7 +349,7 @@ For example, we have the prototypal chain `Animal` -> `Pet` -> `Dog`. Since all 
 #### Pseudo-Classical pattern
 
 ``` js
-function Pet() {
+function Pet(name) {
   this.loved = true;
 }
 
@@ -357,9 +357,10 @@ Pet.prototype.giveLove = function () {
   console.log('Petting the pet! So much love <3');
 }
 
-function Dog(name, age) {
-  this.name = name;
+function Dog(name, age, breed) {
+  Dog.call(this, name);
   this.age = age;
+  this.breed = breed;
 }
 
 Dog.prototype = Object.create(Pet.prototype);
@@ -378,6 +379,11 @@ console.log(puppi.name); // => Puppi
 puppi.greet(); // => Woof! I'm Puppi!
 puppi.giveLove(); // => Petting the pet! So much love <3
 ```
+
+- use `Function.prototype.call` to have the subclass "inherit" properties from the parent class
+- use `Function.prototype = Object.create(obj)` to "inherit" methods from the parent class
+- use `Function.prototype.constructor` to manually reset the property to point back to the appropriate constructor
+
 
 #### OLOO
 

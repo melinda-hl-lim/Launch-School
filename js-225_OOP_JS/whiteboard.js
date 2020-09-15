@@ -1,28 +1,18 @@
-function Pet() {
-  this.loved = true;
+// It has a default seed value of 0.
+
+// Calling the function with no arguments returns the current value of the seed and increments the seed value by 1.
+
+// Calling the function with an integer sets the current value of the seed to the integer passed. It returns the current value of the seed and increments the seed value by 1.
+
+function makeSerialCounter() {
+  let count = -1;
+
+  return function (seed) {
+    if (seed !== undefined) {
+      count = seed;
+      return count;
+    }
+    count += 1;
+    return count;
+  };
 }
-
-Pet.prototype.giveLove = function () {
-  console.log('Petting the pet! So much love <3');
-};
-
-function Dog(name, age) {
-  this.name = name;
-  this.age = age;
-}
-
-Dog.prototype = Object.create(Pet.prototype);
-Dog.prototype.constructor = Dog;
-
-Dog.prototype.greet = function () {
-  console.log(`Woof! I'm ${this.name}!`);
-};
-
-Dog.prototype.dig = function () {
-  console.log('Digging dig dig~');
-};
-
-const puppi = new Dog('Puppi', 8);
-console.log(puppi.name); // => Puppi
-puppi.greet(); // => Woof! I'm Puppi!
-puppi.giveLove(); // => Petting the pet! So much love <3
