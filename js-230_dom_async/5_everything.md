@@ -135,3 +135,23 @@ document.addEventListener('DOMContentLoaded', () => {
 We're going to revisit our Space Design website from an earlier course, and add more information about our team members. Our designer has come up with a common means of displaying more information as an overlay on the page content, called a modal. 
 
 A modal acts like a separate sub-window of content that can be closed in order to return to the main content, all without leaving the page. These always use CSS positioning to place the modal and an optional overlay element over the top of the content. The overlay acts as a blocking element to prevent interacting with the page underneath the modal. It is good practice to have at least a close link and a close action bound to clicking on the overlay that will remove the modal and the overlay.
+
+
+Solution in Downloads/company_site
+
+
+## Photo Gallery Slideshow
+
+Skip
+
+
+## Refactoring: Remove jQuery
+
+In this assignment, we're going to start of with some code that uses jQuery and replace the jQuery methods by using vanilla JS and built in browser APIs.
+
+The main functionality of the program is: 
+- the ability to dynamically add order lines to an Inventory Order Form using an 'Add Item' button, 
+- and to also delete a specific line item using a 'Delete' link on that item.
+
+The current implementation creates each order line by using jQuery to perform a string replacement using some pre-defined HTML located in a `<script>` element with an id of `inventory_item`. We will be replacing this string replacement approach with a Handlebars template. 
+

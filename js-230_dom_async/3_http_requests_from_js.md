@@ -107,7 +107,7 @@ request.addEventListener('load', (event) => {
 
 - `open(method, url)`: open a connection to `url` using `method`
 
-- `send(data)`: send the requestion, optionally sending along `data`
+- `send(data)`: send the request, optionally sending along `data`
 
 - `setRequestHeader(header, value)`: set HTTP `header` to `value`
 
@@ -127,7 +127,7 @@ request.addEventListener('load', (event) => {
 - `responseText`: raw text of the response body
   - default value: `null`
 
-- `response`: parsed content of response -- not meaninful usually
+- `response`: parsed content of response -- not meaningful usually
   - default value: `null`
 
 *Note the difference between `responseText` and `response`.* This is important for sending and receiving JSON data.
@@ -571,7 +571,7 @@ A cross-origin request could be a request for an image, a JavaScript file, an XH
 
 By default, the `XHR` object *can't* send cross-origin requests. 
 
-All browsers implement a security feature called **the same-origin policy**. The application can request resources from the oigin domain, but a request from any other domain causes an error.
+All browsers implement a security feature called **the same-origin policy**. The application can request resources from the origin domain, but a request from any other domain causes an error.
 
 To allow cross-origin access to resources (ex: info from a weather API), applications use the **Cross-Origin Resource Sharing (CORS)**.
 
