@@ -171,7 +171,7 @@ At this point, the dispatch process reverses and from the `target` element the e
 
 As the `event` object moves through capturing and bubbling phases, it checks if there are any listeners for the event on the DOM objects that it passes.
 
-If there is an event listener, the event listener fires on the target element, which is described as firing on the **target phase**. 
+If there is an event listener, the event listener fires. When the event listener fires on the target element, which is described as firing on the **target phase**. 
 
 The event gets dispatched to each element twice, once during capturing and once during bubbling. However, the *event listener* only gets called/fired in one phase. By default, the listener is set to fire during the *bubbling phase*. To set it to listen on the capturing phase, we can use a third optional argument for `addEventListener`: set `useCapture` to `true`.
 

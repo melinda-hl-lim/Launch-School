@@ -44,3 +44,55 @@ When implementing the function, keep in mind that server has been known to slow 
 
 Finally, inform the user about the completion of the request regardless of the success or failure (timeout) of the request.
 
+## 3. Adding Staff
+
+``` html
+<body>
+  <form>
+    <label for="email">Email</label>
+    <input name="email" id="email" type="text" />
+
+    <label for="name">Name</label>
+    <input name="name" id="name" type="text" />
+
+    <input type="submit" value="Add Staff">
+  </form>
+</body>
+```
+``` js
+let form = document.querySelector('form');
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    let request = new XMLHttpRequest();
+    request.open('POST', 'http://localhost:3000/api/staff_members');
+    request.setRequestHeader('Content-Type', 'application/json');
+
+    let name = form.querySelector('#name').value
+    let email = form.querySelector('#email').value
+
+    if (!name || !email) {
+      alert('Staff cannot be created. Please check your inputs.')
+    } else {
+      let data = {
+        name: name,
+        email: email,
+      }
+      let json = JSON.stringify(data);
+
+      request.send(json);
+
+      request.addEventListener('load', () => {
+        if (request.status === 201) {
+          let { id } = JSON.parse(request.response);
+          alert(`Successfully created staff with id: ${id}`);
+        }
+      })
+    }
+
+  })
+  ```
+
+## 4. Adding Schedules
+
