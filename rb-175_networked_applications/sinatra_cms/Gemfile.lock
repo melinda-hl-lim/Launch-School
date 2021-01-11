@@ -2,6 +2,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     backports (3.17.1)
+    bcrypt (3.1.16)
     erubis (2.7.0)
     minitest (5.14.0)
     multi_json (1.14.1)
@@ -10,7 +11,7 @@ GEM
       rack
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
-    redcarpet (3.5.0)
+    redcarpet (3.5.1)
     sinatra (1.4.8)
       rack (~> 1.5)
       rack-protection (~> 1.4)
@@ -28,6 +29,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  bcrypt
   erubis
   minitest
   rack-test
